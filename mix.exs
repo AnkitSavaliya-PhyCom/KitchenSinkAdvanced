@@ -22,7 +22,10 @@ defmodule Noizu.KitchenSink.Mixfile do
   end # end package
 
   def application do
-    [ applications: [:logger] ]
+    [
+      applications: [:logger],
+      extra_applications: [:uuid, :fastglobal, :semaphore, :amnesia, :noizu_core, :markdown, :noizu_mnesia_versioning, :noizu_rule_engine, :timex, :sendgrid, :noizu_scaffolding, :poison]
+    ]
   end # end application
 
   defp deps do
@@ -32,11 +35,15 @@ defmodule Noizu.KitchenSink.Mixfile do
       {:uuid, "~> 1.1" },
       {:exquisite, git: "https://github.com/noizu/exquisite.git", ref: "7a4a03d", override: true},
       {:amnesia, git: "https://github.com/noizu/amnesia.git", ref: "9266002", override: true}, # Mnesia Wrappeir
-      {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.7", override: true},
-      {:noizu_simple_pool, github: "noizu/SimplePool", tag: "2.1.1", override: true},
-      {:noizu_scaffolding, github: "noizu/ElixirScaffolding", tag: "1.2.1", override: true},
+      {:poison, "~> 3.1.0", override: true},
+
+      {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.10", override: true},
+      {:noizu_simple_pool, git: "git@github.com:noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
+      {:noizu_scaffolding, git: "git@github.com:noizu-labs/ElixirScaffoldingAdvanced.git", branch: "master", override: true},
+
       {:noizu_mnesia_versioning, github: "noizu/MnesiaVersioning", tag: "0.1.9", override: true},
       {:noizu_rule_engine, github: "noizu/RuleEngine", tag: "0.2.0"},
+
       {:fastglobal, "~> 1.0"}, # https://github.com/discordapp/fastglobal
       {:semaphore, "~> 1.0"}, # https://github.com/discordapp/semaphore
       {:tzdata, github: "noizu/tzdata", tag: "opt_exp", override: true},
