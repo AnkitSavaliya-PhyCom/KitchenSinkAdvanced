@@ -7,9 +7,9 @@ defmodule Noizu.V3.CMS.Article.Info do
   use Noizu.SimpleObject
   @vsn 1.0
   Noizu.SimpleObject.noizu_struct() do
-    internal_field :record
-    internal_field :record_type
-    internal_field :record_manager
+    internal_field :article
+    internal_field :article_type
+    internal_field :manager
 
     internal_field :name
     internal_field :description

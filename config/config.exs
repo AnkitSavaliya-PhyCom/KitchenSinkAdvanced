@@ -3,7 +3,7 @@
 #
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
-use Mix.Config
+import Config
 
 config :noizu_scaffolding,
        default_audit_engine: Noizu.KitchenSink.AuditEngine,
@@ -13,3 +13,6 @@ config :sendgrid,
        api_key: System.get_env("SENDGRID_KS_KEY"),
        simulate: false,
        email_site_url: "https://github.com/noizu/KitchenSink"
+
+
+import_config "#{config_env()}.exs"
