@@ -28,4 +28,10 @@ defmodule Noizu.V3.CMS.Article do
     end
   end
 
+  defmodule CMS do
+    Noizu.V3.CMS.ArticleType.article_cms_manager() do
+    end
+  end
+
+
 end
