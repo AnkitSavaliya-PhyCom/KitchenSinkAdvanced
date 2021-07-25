@@ -1,12 +1,12 @@
 defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
 
-  defmacro __using__(options \\ nil) do
+  defmacro __using__(_options \\ nil) do
     quote do
       Module.register_attribute(__MODULE__, :cms_article_manager, accumulate: false)
     end
   end
 
-  def pre_defstruct(options) do
+  def pre_defstruct(_options) do
     quote do
       Module.put_attribute(__MODULE__, :__nzdo__article_cms_manager, Module.concat([@__nzdo__poly_base, CMS]))
     end
