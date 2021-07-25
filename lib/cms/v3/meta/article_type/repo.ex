@@ -30,21 +30,23 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #------------------------------------------
       # Create - layer_create
       #------------------------------------------
-      def layer_create(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
-        entity = %{entity| identifier: {:ref, Noizu.V3.CMS.Version.Entity, {1,2,3}}}
-        IO.puts "CMS LAYER CREATE| #{inspect entity}"
-        entity
+      def layer_create(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
+        #entity = %{entity| identifier: {:ref, Noizu.V3.CMS.Version.Entity, {1,2,3}}}
+        IO.puts "CMS LAYER CREATE| #{inspect entity} - #{inspect layer}\n.......................\n\n\n"
+        super(layer, entity, context, options)
       end
       def layer_create(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
+        IO.puts "CMS LAYER CREATE| #{inspect entity} - #{inspect layer}\n.......................\n\n\n"
         super(layer, entity, context, options)
       end
 
-      def layer_create!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
-        entity = %{entity| identifier: {:ref, Noizu.V3.CMS.Version.Entity, {1,2,3}}}
-        IO.puts "CMS LAYER CREATE!| #{inspect entity}"
-        entity
+      def layer_create!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
+        #entity = %{entity| identifier: {:ref, Noizu.V3.CMS.Version.Entity, {1,2,3}}}
+        IO.puts "CMS LAYER CREATE!| #{inspect entity} - #{inspect layer}\n.......................\n\n\n"
+        super(layer, entity, context, options)
       end
       def layer_create!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
+        IO.puts "CMS LAYER CREATE!| #{inspect entity} - #{inspect layer}\n.......................\n\n\n"
         super(layer, entity, context, options)
       end
 
@@ -52,17 +54,17 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #------------------------------------------
       # Update - layer_update
       #------------------------------------------
-      def layer_update(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
+      def layer_update(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
         IO.puts "CMS LAYER UPDATE"
-        entity
+        super(layer, entity, context, options)
       end
       def layer_update(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
         super(layer, entity, context, options)
       end
 
-      def layer_update!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
+      def layer_update!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
         IO.puts "CMS LAYER UPDATE"
-        entity
+        super(layer, entity, context, options)
       end
       def layer_update!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
         super(layer, entity, context, options)
@@ -72,17 +74,17 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #------------------------------------------
       # Update - layer_delete
       #------------------------------------------
-      def layer_delete(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
+      def layer_delete(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
         IO.puts "CMS LAYER UPDATE"
-        entity
+        super(layer, entity, context, options)
       end
       def layer_delete(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
         super(layer, entity, context, options)
       end
 
-      def layer_delete!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
+      def layer_delete!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
         IO.puts "CMS LAYER UPDATE"
-        entity
+        super(layer, entity, context, options)
       end
       def layer_delete!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
         super(layer, entity, context, options)
@@ -92,17 +94,17 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #------------------------------------------
       # Update - layer_get
       #------------------------------------------
-      def layer_get(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
+      def layer_get(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
         IO.puts "CMS LAYER GET"
-        entity
+        super(layer, entity, context, options)
       end
       def layer_get(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
         super(layer, entity, context, options)
       end
 
-      def layer_get!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = _layer, entity, _context, _options) do
+      def layer_get!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{schema: Noizu.V3.CMS.ArticleType.Persistence} = layer, entity, context, options) do
         IO.puts "CMS LAYER GET"
-        entity
+        super(layer, entity, context, options)
       end
       def layer_get!(%Noizu.Scaffolding.V3.Schema.PersistenceLayer{} = layer, entity, context, options) do
         super(layer, entity, context, options)

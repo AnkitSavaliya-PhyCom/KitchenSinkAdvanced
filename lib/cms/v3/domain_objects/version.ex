@@ -7,7 +7,7 @@ defmodule Noizu.V3.CMS.Version do
   use Noizu.V3.CMS.ArticleType
   @vsn 1.0
   @sref "cms-article-version"
-  @persistence_layer {Noizu.V3.CMS.Database, Noizu.V3.CMS.Article.Version.Table}
+  @persistence_layer {Noizu.V3.CMS.Database, Noizu.V3.CMS.Database.Article.Version.Table}
   defmodule Entity do
     Noizu.V3.CMS.ArticleType.article_entity() do
       identifier :integer

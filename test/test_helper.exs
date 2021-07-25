@@ -9,7 +9,7 @@ Application.load(:tzdata)
 {:ok, _} = Application.ensure_all_started(:tzdata)
 
 Noizu.Support.Cms.V2.Database.MnesiaEmulator.start_link()
-Noizu.Support.V3.CMS.Database.MnesiaEmulator.start_link()
+Noizu.Testing.Mnesia.Emulator.start_link()
 
 # Schema Setup
 #Amnesia.Schema.destroy()
@@ -51,6 +51,15 @@ Noizu.Cms.Database.PostTable.create(memory: [node()])
 Noizu.Cms.Database.Post.TagTable.create(memory: [node()])
 Noizu.Cms.Database.Post.VersionTable.create(memory: [node()])
 Noizu.Cms.Database.Post.VersionHistoryTable.create(memory: [node()])
+
+# V3.CMS
+Noizu.V3.CMS.Database.Article.Table.create(memory: [node()])
+Noizu.V3.CMS.Database.Article.Index.Table.create(memory: [node()])
+Noizu.V3.CMS.Database.Article.Tag.Table.create(memory: [node()])
+Noizu.V3.CMS.Database.Article.VersionSequencer.Table.create(memory: [node()])
+Noizu.V3.CMS.Database.Article.Version.Table.create(memory: [node()])
+Noizu.V3.CMS.Database.Article.Version.Revision.Table.create(memory: [node()])
+Noizu.V3.CMS.Database.Article.Active.Version.Table.create(memory: [node()])
 
 # Smart Token
 Noizu.SmartToken.Database.TokenTable.create(memory: [node()])

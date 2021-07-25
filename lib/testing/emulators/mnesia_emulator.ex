@@ -241,7 +241,7 @@ defmodule Noizu.Testing.Mnesia do
       write!(mock_configuration, record)
     end
     def write!({table, {scenario, settings}} = _mock_configuration, record) do
-      key_field = (settings[:key] || List.first(table.attributes()))
+      key_field = (settings[:key] || List.first(table.info(:attributes)))
       key = get_in(record, [Access.key(key_field)])
       cond do
         settings[:type] == :bag -> MockDB.write_bag(table, key, record, scenario)
@@ -294,7 +294,7 @@ defmodule Noizu.Testing.Mnesia do
     defmacro customize(options \\ [], [do: block]) do
       options = Macro.expand(options, __ENV__)
       quote do
-        alias Noizu.Testing.Mnesia.TableMocker, as: MockDB.Table
+        alias Noizu.Testing.Mnesia.TableMocker, as: MockDBTable
         #--------------------
         #
         #--------------------
@@ -317,22 +317,22 @@ defmodule Noizu.Testing.Mnesia do
           ]
         end
 
-        def write(mock_configuration, record), do: MockDB.Table.write(mock_configuration, record)
-        def write!(mock_configuration, record), do: MockDB.Table.write!(mock_configuration, record)
+        def write(mock_configuration, record), do: MockDBTable.write(mock_configuration, record)
+        def write!(mock_configuration, record), do: MockDBTable.write!(mock_configuration, record)
 
-        def read(mock_configuration, key), do: MockDB.Table.read(mock_configuration, key)
-        def read!(mock_configuration, key), do: MockDB.Table.read!(mock_configuration, key)
+        def read(mock_configuration, key), do: MockDBTable.read(mock_configuration, key)
+        def read!(mock_configuration, key), do: MockDBTable.read!(mock_configuration, key)
 
-        def delete(mock_configuration, key), do: MockDB.Table.delete(mock_configuration, key)
-        def delete!(mock_configuration, key), do: MockDB.Table.delete!(mock_configuration, key)
+        def delete(mock_configuration, key), do: MockDBTable.delete(mock_configuration, key)
+        def delete!(mock_configuration, key), do: MockDBTable.delete!(mock_configuration, key)
 
-        def match(mock_configuration, selector), do: MockDB.Table.match(mock_configuration, selector)
-        def match!(mock_configuration, selector), do: MockDB.Table.match!(mock_configuration, selector)
+        def match(mock_configuration, selector), do: MockDBTable.match(mock_configuration, selector)
+        def match!(mock_configuration, selector), do: MockDBTable.match!(mock_configuration, selector)
 
         defoverridable [
-          mock: 0,
-          mock: 1,
-          mock: 2,
+          config: 0,
+          config: 1,
+          config: 2,
           write: 2,
           write!: 2,
           read: 2,
@@ -354,7 +354,7 @@ defmodule Noizu.Testing.Mnesia do
         #===========================================================
         # annotation dependend methods, can be overriden by caller by adding overrides after Noizu.Testing.Mnesia.mock_table() do .. end section
         #===========================================================
-        base = Module.split() |> Enum.slice(0..-2) |> Module.concat()
+        base = Module.split(__MODULE__) |> Enum.slice(0..-2) |> Module.concat()
         base_open = Module.open?(base)
         mock_table = cond do
                        o = unquote(options[:table]) -> o
@@ -385,13 +385,18 @@ defmodule Noizu.Testing.Mnesia do
                            :else -> []
                          end || []
 
+        @mock_table mock_table
+        @stubbed stubbed
+        @override_match override_match
+        @default_config_settings default_config_settings
+
         #--------------------
         #
         #--------------------
-        def __mock_option__(:table), do: mock_table
-        def __mock_option__(:stubbed), do: stubbed
-        def __mock_option__(:override_match), do: override_match
-        def __mock_option__(:default_config_settings), do: default_config_settings
+        def __mock_option__(:table), do: @mock_table
+        def __mock_option__(:stubbed), do: @stubbed
+        def __mock_option__(:override_match), do: @override_match
+        def __mock_option__(:default_config_settings), do: @default_config_settings
 
         #--------------------
         #
@@ -401,7 +406,7 @@ defmodule Noizu.Testing.Mnesia do
         #--------------------
         #
         #--------------------
-        def __mock_override_match__(selector, _mock_configuration), do: __mock__option__(:override_match)[selector]
+        def __mock_override_match__(selector, _mock_configuration), do: __mock_option__(:override_match)[selector]
 
         defoverridable [
           __mock_option__: 1,

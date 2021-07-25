@@ -48,19 +48,32 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
   @tag :cms_version_provider
   test "Create Version" do
     with_mocks([
-      {Article.Table, [:passthrough], MockDB.Article.MockTable.strategy()},
-      {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.strategy()},
-      {Article.Tag.Table, [:passthrough], MockDB.Article.Tag.MockTable.strategy()},
-      {Article.VersionSequencer.Table, [:passthrough], MockDB.Article.VersionSequencer.MockTable.strategy()},
-      {Article.Version.Table, [:passthrough], MockDB.Article.Version.MockTable.strategy()},
-      {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.strategy()},
-      {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.strategy()},
+      {Article.Table, [:passthrough], MockDB.Article.MockTable.config()},
+      {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.config()},
+      {Article.Tag.Table, [:passthrough], MockDB.Article.Tag.MockTable.config()},
+      {Article.VersionSequencer.Table, [:passthrough], MockDB.Article.VersionSequencer.MockTable.config()},
+      {Article.Version.Table, [:passthrough], MockDB.Article.Version.MockTable.config()},
+      {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
+      {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
     ]) do
-      Noizu.Support.V3.CMS.Database.MnesiaEmulator.reset()
+      Noizu.Testing.Mnesia.Emulator.reset()
 
       # Setup Article
       post = @cms_post
       post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
+      post2 = Noizu.V3.CMS.Article.Repo.get!(post.identifier, @context)
+      IO.puts """
+
+
+
+
+  #{inspect post}
+  +++++++++++++++
+  #{inspect post2}
+
+
+
+"""
       article = post.article_info.article
       {:ref, _, aid} = article
 
