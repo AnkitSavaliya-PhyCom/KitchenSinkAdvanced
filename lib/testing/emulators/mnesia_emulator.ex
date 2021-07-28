@@ -267,7 +267,7 @@ defmodule Noizu.Testing.Mnesia do
     def match(mock_configuration, selector) do
       match!(mock_configuration, selector)
     end
-    def match!({table, scenario, _settings} = mock_configuration, selector) do
+    def match!({table, {scenario, _settings}} = mock_configuration, selector) do
       response = case __mock_override_match__(selector, mock_configuration) do
                    nil -> MockDB.match(table, selector, scenario)
                    false -> MockDB.match(table, selector, scenario)
