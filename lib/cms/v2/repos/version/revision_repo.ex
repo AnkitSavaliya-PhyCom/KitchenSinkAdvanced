@@ -88,7 +88,6 @@ defmodule Noizu.Cms.V2.Version.RevisionRepo do
     }
   end
 
-
   def revision_create(article, version, context, options, cms) do
     cms.cms_revision().revision_create(article, version, context, options)
   end

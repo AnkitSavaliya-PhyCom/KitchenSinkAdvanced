@@ -25,6 +25,12 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       def __cms_article__(ref, property, context, options), do: @__nzdo__poly_base.__cms_article__(ref, property, context, options)
       def __cms_article__!(ref, property, context, options), do: @__nzdo__poly_base.__cms_article__!(ref, property, context, options)
 
+      def revision_to_id(revision) do
+        case __cms_manager__().__revision__().id(revision) do
+          {{:ref, _version_entity, {{:ref, _entity, id}, version_path}}, revision_id} -> {:revision, {id, version_path, revision_id}}
+          _ -> nil
+        end
+      end
 
       def pre_create_callback(entity, context, options) do
         entity = super(entity, context, options)
@@ -88,11 +94,11 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                            cms_ref = __entity__.ref(id)
                            version = __cms_manager__().__cms_version__().__entity__().ref({cms_ref, version_path})
                            active_revision = Noizu.V3.CMS.Protocol.__cms_article__(version, :active_revision, context, options)
-                           __cms_manager__().revision_to_id(active_revision)
+                           revision_to_id(active_revision)
                          :else ->
                            cms_ref = __entity__.ref(ref)
                            active_revision = Noizu.V3.CMS.Protocol.__cms_article__(cms_ref, :active_revision, context, options)
-                           __cms_manager__().revision_to_id(active_revision)
+                           revision_to_id(active_revision)
                        end
             super(identifier, context, options)
         rescue e -> {:error, e}
@@ -110,11 +116,11 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                            cms_ref = __entity__.ref(id)
                            version = __cms_manager__().__cms_version__().__entity__().ref({cms_ref, version_path})
                            active_revision = Noizu.V3.CMS.Protocol.__cms_article__!(version, :active_revision, context, options)
-                           __cms_manager__().revision_to_id(active_revision)
+                           revision_to_id(active_revision)
                          :else ->
                            cms_ref = __entity__.ref(ref)
                            active_revision = Noizu.V3.CMS.Protocol.__cms_article__!(cms_ref, :active_revision, context, options)
-                           __cms_manager__().revision_to_id(active_revision)
+                           revision_to_id(active_revision)
                        end
           super(identifier, context, options)
         rescue e -> {:error, e}
@@ -207,6 +213,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                  end
         super(entity, context, options)
       end
+
 
       defoverridable [
         __cms__: 0,

@@ -1,9 +1,9 @@
 defmodule Noizu.V3.CMS.Meta.ArticleType.Base do
 
+
+
   defmacro __using__(_options \\ nil) do
-    quote do
-      @persistence_layer {Noizu.V3.CMS.ArticleType.Persistence, cascade?: true, cascade_block?: true}
-    end
+    nil
   end
 
   defmacro __before_compile__(_) do

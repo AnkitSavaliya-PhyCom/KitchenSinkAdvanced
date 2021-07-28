@@ -137,7 +137,6 @@ defmodule Noizu.Cms.V2.Cms.VersionBehaviour.Default do
     end
   end
 
-
   #------------------------------
   # article_string_to_id
   #------------------------------
