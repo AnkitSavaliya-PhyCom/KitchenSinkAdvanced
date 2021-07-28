@@ -35,6 +35,15 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def __cms_article__(ref, property, context, options), do: Provider.__cms_article__(__MODULE__, ref, property, context, options)
       def __cms_article__!(ref, property, context, options), do: Provider.__cms_article__!(__MODULE__, ref, property, context, options)
 
+      def update_article_info(ref, context, options), do: Provider.update_article_info(__MODULE__, ref, context, options)
+      def update_article_info!(ref, context, options), do: Provider.update_article_info!(__MODULE__, ref, context, options)
+
+      def init_article_info(ref, context, options), do: Provider.init_article_info(__MODULE__, ref, context, options)
+      def init_article_info!(ref, context, options), do: Provider.init_article_info!(__MODULE__, ref, context, options)
+
+      def versioning_record?(ref, context, options), do: Provider.versioning_record?(__MODULE__, ref, context, options)
+      def versioning_record!(ref, context, options), do: Provider.versioning_record!(__MODULE__, ref, context, options)
+
       defoverridable [
         __cms__: 0,
         __cms__: 1,
@@ -42,6 +51,16 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
         __cms_article__: 4,
         __cms_article__!: 3,
         __cms_article__!: 4,
+
+        update_article_info: 3,
+        update_article_info!: 3,
+
+        init_article_info: 3,
+        init_article_info!: 3,
+
+        versioning_record?: 3,
+        versioning_record!: 3,
+
       ]
     end
   end
