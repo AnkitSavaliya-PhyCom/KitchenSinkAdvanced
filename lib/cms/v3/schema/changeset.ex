@@ -33,6 +33,7 @@ defmodule Noizu.V3.CMS.ChangeSet do
                   create_table(Noizu.V3.CMS.Database.Article.Version.Table, [disk: neighbors])
                   create_table(Noizu.V3.CMS.Database.Article.Version.Revision.Table, [disk: neighbors])
                   create_table(Noizu.V3.CMS.Database.Article.Active.Version.Table, [disk: neighbors])
+                  create_table(Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table, [disk: neighbors])
                   :success
         end,
         rollback: fn() ->
@@ -43,6 +44,7 @@ defmodule Noizu.V3.CMS.ChangeSet do
           destroy_table(Noizu.V3.CMS.Database.Article.Version.Table)
           destroy_table(Noizu.V3.CMS.Database.Article.Version.Revision.Table)
           destroy_table(Noizu.V3.CMS.Database.Article.Active.Version.Table)
+          destroy_table(Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table)
           :removed
         end
       }

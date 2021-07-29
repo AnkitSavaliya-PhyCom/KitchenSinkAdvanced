@@ -7,7 +7,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Versioning.Base do
   end
 
   defmacro __before_compile__(_) do
+    macro_file = __ENV__.file
     quote do
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+
       def __cms__(), do: nil
       def __cms__!(), do: nil
       def __cms__(property), do: nil

@@ -13,40 +13,47 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
   end
 
   def post_defstruct(_options) do
+    macro_file = __ENV__.file
     quote do
 
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_manager__(), do: @__nzdo__poly_base.__cms_manager__()
 
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__(), do: @__nzdo__poly_base.__cms__()
       def __cms__!(), do: @__nzdo__poly_base.__cms__!()
 
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__(property), do: @__nzdo__poly_base.__cms__(property)
       def __cms__!(property), do: @__nzdo__poly_base.__cms__!(property)
 
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_info__(ref, context, options), do: @__nzdo__poly_base.__cms_info__(ref, context, options)
       def __cms_info__!(ref, context, options), do: @__nzdo__poly_base.__cms_info__!(ref, context, options)
 
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_info__(ref, property, context, options), do: @__nzdo__poly_base.__cms_info__(ref, property, context, options)
       def __cms_info__!(ref, property, context, options), do: @__nzdo__poly_base.__cms_info__!(ref, property, context, options)
 
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __revision_to_id__(revision) do
         case __cms_manager__().__cms__(:revision).id(revision) do
           {{:ref, _version_entity, {{:ref, _entity, id}, version_path}}, revision_id} -> {:revision, {id, version_path, revision_id}}
@@ -57,6 +64,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_create_callback(entity, context, options) do
         entity = super(entity, context, options)
         versioning_record? = Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options)
@@ -83,6 +91,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         end
       end
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_create_callback!(entity, context, options) do
         entity = super(entity, context, options)
         versioning_record? = Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options)
@@ -110,6 +119,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def get(ref, context, options \\ nil) do
         try do
           identifier = cond do
@@ -134,11 +144,12 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         end
       end
 
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def get!(ref, context, options \\ nil) do
         try do
           identifier = cond do
-                         Kernel.match?({:revision, {_id, _version_path, _revision_id}}, ref) ->
-                           ref
+                         Kernel.match?({:revision, {_id, _version_path, _revision_id}}, ref) -> ref
                          Kernel.match?({:version, {_id, _version_path}}, ref) ->
                            {:version, {id, version_path}} = ref
                            cms_ref = __entity__.ref(id)
@@ -161,6 +172,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_update_callback(entity, context, options) do
         options_a = put_in(options, [:nested_call], true)
         if (entity.identifier == nil), do: throw "Identifier not set"
@@ -170,6 +182,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         |> __cms_manager__().__populate_version__(context, options_a)
       end
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_update_callback!(entity, context, options) do
         options_a = put_in(options, [:nested_call], true)
         if (entity.identifier == nil), do: throw "Identifier not set"
@@ -182,6 +195,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_delete_callback(entity, context, options) do
         if entity.identifier == nil, do: throw(:identifier_not_set)
 
@@ -216,6 +230,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         super(entity, context, options)
       end
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_delete_callback!(entity, context, options) do
         if entity.identifier == nil, do: throw(:identifier_not_set)
 
@@ -250,7 +265,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         super(entity, context, options)
       end
 
-
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
 
 
       defoverridable [

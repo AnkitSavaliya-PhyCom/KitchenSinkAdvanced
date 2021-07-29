@@ -112,8 +112,64 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       ref.__struct__.ref(identifier)
     end
 
-    def article_info(_m, ref, _context, _options), do: ref.article_info
-    def article_info!(_m, ref, _context, _options), do: ref.article_info
+
+    def active_revision(m, %{article_info: article_info} = ref, context, options) do
+      m.__cms_manager__().active_revision(ref, context, options)
+    end
+    def active_revision(m, {:ref, m, identifier}, context, options) do
+      aid = case identifier do
+        {:version, {aid, _version_path}} -> aid
+        {:revision, {aid, _version_path, _rev}} -> aid
+        aid when is_integer(aid) or is_atom(aid) -> aid
+        :else -> nil
+      end
+      cond do
+        aid == nil -> nil
+        :else ->
+          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+            [av|_] ->
+              cond do
+                ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read(av.version) -> ar.revision
+                :else -> nil
+              end
+              _ -> nil
+          end
+      end
+    end
+
+    def active_revision!(m, %{article_info: article_info} = ref, context, options) do
+      m.__cms_manager__().active_revision!(ref, context, options)
+    end
+    def active_revision!(m, {:ref, m, identifier}, context, options) do
+      aid = case identifier do
+              {:version, {aid, _version_path}} -> aid
+              {:revision, {aid, _version_path, _rev}} -> aid
+              aid when is_integer(aid) or is_atom(aid) -> aid
+              :else -> nil
+            end
+      cond do
+        aid == nil -> nil
+        :else ->
+          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match!([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+            v = [av|_] ->
+              cond do
+                ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read!(av.version) -> ar.revision
+                :else -> nil
+              end
+            v -> nil
+          end
+      end
+    end
+
+    def article_info(_m, %{article_info: article_info}, _context, _options), do: article_info
+    def article_info(m, ref, _context, _options) do
+      if entity = m.entity(ref), do: entity.article_info
+    end
+
+    def article_info!(_m, %{article_info: article_info}, _context, _options), do: article_info
+    def article_info!(m, ref, _context, _options) do
+      if entity = m.entity(ref), do: entity.article_info
+    end
 
     def versioning_record?(_m, %{identifier: {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
     def versioning_record?(_m,  %{identifier: {:version, {_identifier, _version}}}, _context, _options), do: true
@@ -138,45 +194,60 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
   def post_defstruct(options) do
     options = Macro.expand(options, __ENV__)
     article_type = options[:article_type] || :default
+    macro_file = __ENV__.file
     quote do
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       alias Noizu.V3.CMS.Meta.ArticleType.Entity.Default, as: Provider
       def __cms_manager__(), do:  @__nzdo__poly_base.__cms_manager__()
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__(), do: put_in(@__nzdo__poly_base.__cms__(), [:article_type], unquote(article_type))
       def __cms__(), do: put_in(@__nzdo__poly_base.__cms__!(), [:article_type], unquote(article_type))
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__(:article_type), do: unquote(article_type)
       def __cms__(property), do: @__nzdo__poly_base.__cms__(property)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__!(:article_type), do: unquote(article_type)
       def __cms__!(property), do: @__nzdo__poly_base.__cms__!(property)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_info__(ref, context, options), do: Provider.__cms_info__(__MODULE__, ref, context, options)
       def __cms_info__!(ref, context, options), do: Provider.__cms_info__!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_info__(ref, property, context, options), do: Provider.__cms_info__(__MODULE__, ref, property, context, options)
       def __cms_info__!(ref, property, context, options), do: Provider.__cms_info__!(__MODULE__, ref, property, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __set_article_info__(ref, update, context, options), do: Provider.__set_article_info__(__MODULE__, ref, update, context, options)
       def __set_article_info__!(ref, update, context, options), do: Provider.__set_article_info__!(__MODULE__, ref, update, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __update_article_info__(ref, context, options), do: Provider.__update_article_info__(__MODULE__, ref, context, options)
       def __update_article_info__!(ref, context, options), do: Provider.__update_article_info__!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __init_article_info__(ref, context, options), do: Provider.__init_article_info__(__MODULE__, ref, context, options)
       def __init_article_info__!(ref, context, options), do: Provider.__init_article_info__!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def aref(ref, context, options), do: Provider.aref(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def article_info(ref, context, options), do: Provider.article_info(__MODULE__, ref, context, options)
       def article_info!(ref, context, options), do: Provider.article_info!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def versioning_record?(ref, context, options), do: Provider.versioning_record?(__MODULE__, ref, context, options)
       def versioning_record!(ref, context, options), do: Provider.versioning_record!(__MODULE__, ref, context, options)
 
-      def active_revision(ref, context, options), do: nil
-      def active_revision!(ref, context, options), do: nil
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def active_revision(ref, context, options), do: Provider.active_revision(__MODULE__, ref, context, options)
+      def active_revision!(ref, context, options), do: Provider.active_revision!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       defoverridable [
         __cms_manager__: 0,
         __cms__: 0,

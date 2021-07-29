@@ -7,8 +7,54 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     def __update_index__(_m, _ref, _context, _options), do: nil
     def __update_index__!(_m, _ref, _context, _options), do: nil
 
-    def make_active(m, entity, for_version, context, options), do: nil
-    def make_active!(m, entity, for_version, context, options), do: nil
+    def make_active(m, entity, for_version, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
+      for_version_ref = Noizu.ERP.ref(for_version)
+
+      cond do
+        !article_info -> throw "article_info not set"
+        !article_info.version -> throw "version not set"
+        !article_info.revision -> throw "revision not set"
+        for_version_ref != article_info.version -> throw "attempting to make a revision active on the wrong version"
+        :else ->
+          # check if version is active as we will then need to update indexing as well.
+          article_active_version = Noizu.V3.CMS.Database.Article.Active.Version.Table.read(article_info.article)
+          cond do
+            article_active_version == nil -> m.make_active(entity, context, options)
+            article_active_version == article_info.version -> m.make_active(entity, context, options)
+            :else ->
+              %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
+                version: article_info.version,
+                revision: article_info.revision
+              } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write
+          end
+      end
+      entity
+    end
+    def make_active!(m, entity, for_version, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
+      for_version_ref = Noizu.ERP.ref(for_version)
+
+      cond do
+        !article_info -> throw "article_info not set"
+        !article_info.version -> throw "version not set"
+        !article_info.revision -> throw "revision not set"
+        for_version_ref != article_info.version -> throw "attempting to make a revision active on the wrong version"
+        :else ->
+          # check if version is active as we will then need to update indexing as well.
+          article_active_version = Noizu.V3.CMS.Database.Article.Active.Version.Table.read!(article_info.article)
+          cond do
+            article_active_version == nil -> m.make_active!(entity, context, options)
+            article_active_version == article_info.version -> m.make_active!(entity, context, options)
+            :else ->
+              %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
+                version: article_info.version,
+                revision: article_info.revision
+              } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write!
+          end
+      end
+      entity
+    end
 
     #-----------------------------
     # make_active/4
@@ -16,15 +62,26 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     def make_active(m, entity, context, options) do
       # Entity may technically be a Version or Revision record.
       # This is fine as long as we can extract tags, and the details needed for the index.
-      article = Noizu.V3.CMS.Protocol.article(entity, context, options)
-      version = Noizu.V3.CMS.Protocol.version(entity, context, options)
-      revision = Noizu.V3.CMS.Protocol.revision(entity, context, options)
+      article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
+
       cond do
-        version == nil -> {:error, :version_not_set}
-        revision == nil -> {:error, :revision_not_set}
+        article_info.version == nil -> {:error, :version_not_set}
+        article_info.revision == nil -> {:error, :revision_not_set}
         :else ->
-          m.__update_tags__(article, context, options)
-          m.__update_index__(article, context, options)
+          m.__update_tags__(entity, context, options)
+          m.__update_index__(entity, context, options)
+
+          #...................................
+          # Needs to be handled externally as providers with multiple persistence layers will want to track this info as well.
+          %Noizu.V3.CMS.Database.Article.Active.Version.Table{
+            article: article_info.article,
+            version: article_info.version
+          } |> Noizu.V3.CMS.Database.Article.Active.Version.Table.write
+
+          %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
+            version: article_info.version,
+            revision: article_info.revision
+          } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write
       end
       entity
     end
@@ -35,21 +92,56 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     def make_active!(m, entity, context, options) do
       # Entity may technically be a Version or Revision record.
       # This is fine as long as we can extract tags, and the details needed for the index.
-      article = Noizu.V3.CMS.Protocol.article!(entity, context, options)
-      version = Noizu.V3.CMS.Protocol.version!(entity, context, options)
-      revision = Noizu.V3.CMS.Protocol.revision!(entity, context, options)
+      article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
+
       cond do
-        version == nil -> {:error, :version_not_set}
-        revision == nil -> {:error, :revision_not_set}
+        article_info.version == nil -> {:error, :version_not_set}
+        article_info.revision == nil -> {:error, :revision_not_set}
         :else ->
-          m.__update_tags__!(article, context, options)
-          m.__update_index__!(article, context, options)
+          m.__update_tags__!(entity, context, options)
+          m.__update_index__!(entity, context, options)
+
+          #...................................
+          # Needs to be handled externally as providers with multiple persistence layers will want to track this info as well.
+          %Noizu.V3.CMS.Database.Article.Active.Version.Table{
+            article: article_info.article,
+            version: article_info.version
+          } |> Noizu.V3.CMS.Database.Article.Active.Version.Table.write!
+
+          %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
+            version: article_info.version,
+            revision: article_info.revision
+          } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write!
       end
       entity
     end
 
-    def active_revision(_m, _ref,_context, _options), do: nil
-    def active_revision!(_m, _ref,_context, _options), do: nil
+    def active_revision(_m, ref, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info(ref, context, options)
+      cond do
+        !article_info -> throw "article_info not found"
+        !article_info.article -> throw "article_info.article not found"
+        av = Noizu.V3.CMS.Database.Article.Active.Version.Table.read(article_info.article) ->
+          cond do
+            ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read(av.version) -> ar.revision
+            :else -> nil
+          end
+        :else -> nil
+      end
+    end
+    def active_revision!(_m, ref, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info!(ref, context, options)
+      cond do
+        !article_info -> throw "article_info not found"
+        !article_info.article -> throw "article_info.article not found"
+        av = Noizu.V3.CMS.Database.Article.Active.Version.Table.read!(article_info.article) ->
+          cond do
+            ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read!(av.version) -> ar.revision
+            :else -> nil
+          end
+        :else -> nil
+      end
+    end
 
     def revisions(_m, _ref,_context, _options), do: nil
     def revisions!(_m, _ref,_context, _options), do: nil
@@ -151,8 +243,6 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
           cond do
             !revision -> {:error, :create_revision}
             :else ->
-              m.make_active(entity, revision, context, options)
-
               # Update identifier
               article_info = article_info.__struct__.overwrite(article_info, [
                 revision: Noizu.ERP.ref(revision)
@@ -164,12 +254,13 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
               qualified_identifier = {:revision, {identifier, version_path, revision_number}}
               entity = put_in(entity, [Access.key(:identifier)], qualified_identifier)
 
+              revision_entity.archive(revision, entity, context, options)
+              |> revision_repo.update(context, options[:create_options])
+
               # Update tags and index
               m.__update_tags__(entity, context, options)
               m.__update_index__(entity, context, options)
-
-              revision_entity.archive(revision, entity, context, options)
-              |> revision_repo.update(context, options[:create_options])
+              m.make_active(entity, context, options)
 
               # Fin.
               entity
@@ -189,7 +280,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       version = version_repo.new_version!(entity, context, options)
                 |> version_repo.create!(context, options[:create_options])
 
-      # 2. If succesful create revision
+      # 2. Create revision
       cond do
         !version -> throw {:error, {:creating_version, :create_failed}}
         :else ->
@@ -204,8 +295,6 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
           cond do
             !revision -> {:error, :create_revision}
             :else ->
-              m.make_active!(entity, revision, context, options)
-
               # Update identifier
               article_info = article_info.__struct__.overwrite!(article_info, [
                 revision: Noizu.ERP.ref(revision)
@@ -217,12 +306,13 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
               qualified_identifier = {:revision, {identifier, version_path, revision_number}}
               entity = put_in(entity, [Access.key(:identifier)], qualified_identifier)
 
+              revision_entity.archive!(revision, entity, context, options)
+              |> revision_repo.update!(context, options[:create_options])
+
               # Update tags and index
               m.__update_tags__!(entity, context, options)
               m.__update_index__!(entity, context, options)
-
-              revision_entity.archive!(revision, entity, context, options)
-              |> revision_repo.update!(context, options[:create_options])
+              m.make_active!(entity, context, options)
 
               # Fin.
               entity
@@ -296,9 +386,11 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     version = options[:version] || Noizu.V3.CMS.Version
     revision = options[:revision] || Noizu.V3.CMS.Version.Revision
     article_info = options[:article_info] || Noizu.V3.CMS.Article.Info
+    macro_file = __ENV__.file
     quote do
       @provider Noizu.V3.CMS.Meta.ArticleType.CMS.Default
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__() do
         Enum.map([:version, :revision, :article_info], &({&1, __cms__(&1)}))
       end
@@ -306,60 +398,77 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         Enum.map([:version, :revision, :article_info], &({&1, __cms__!(&1)}))
       end
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__(:version), do: unquote(version)
       def __cms__(:revision), do: unquote(revision)
       def __cms__(:article_info), do: unquote(article_info)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__!(:version), do: unquote(version)
       def __cms__!(:revision), do: unquote(revision)
       def __cms__!(:article_info), do: unquote(article_info)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_info__(entity, context, options), do: nil
       def __cms_info__!(entity, context, options), do: nil
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_info__(entity, property, context, options), do: nil
       def __cms_info__!(entity, property, context, options), do: nil
 
-
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __update_version__(entity, context, options), do: @provider.__update_version__(__MODULE__, entity, context, options)
       def __update_version__!(entity, context, options), do: @provider.__update_version__!(__MODULE__, entity, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __update_revision__(entity, context, options), do: @provider.__update_revision__(__MODULE__, entity, context, options)
       def __update_revision__!(entity, context, options), do: @provider.__update_revision__!(__MODULE__, entity, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __update_tags__(ref, context, options), do: @provider.__update_tags__(__MODULE__, ref, context, options)
       def __update_tags__!(ref, context, options), do: @provider.__update_tags__!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __update_index__(ref, context, options), do: @provider.__update_index__(__MODULE__, ref, context, options)
       def __update_index__!(ref, context, options), do: @provider.__update_index__!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __populate_version__(entity, context, options), do: @provider.__populate_version__(__MODULE__, entity, context, options)
       def __populate_version__!(entity, context, options), do: @provider.__populate_version__!(__MODULE__, entity, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __initialize_version__(entity, context, options), do: @provider.__initialize_version__(__MODULE__, entity, context, options)
       def __initialize_version__!(entity, context, options), do: @provider.__initialize_version__!(__MODULE__, entity, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def make_active(ref, context, options), do: @provider.make_active(__MODULE__, ref, context, options)
       def make_active!(ref, context, options), do: @provider.make_active!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def make_active(ref, for_version, context, options), do: @provider.make_active(__MODULE__, ref, for_version, context, options)
       def make_active!(ref, for_version, context, options), do: @provider.make_active!(__MODULE__, ref, for_version, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def active_revision(ref, context, options), do: @provider.active_revision(__MODULE__, ref, context, options)
       def active_revision!(ref, context, options), do: @provider.active_revision!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def revisions(ref, context, options), do: @provider.revisions(__MODULE__, ref, context, options)
       def revisions!(ref, context, options), do: @provider.revisions!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def versions(ref, context, options), do: @provider.versions(__MODULE__, ref, context, options)
       def versions!(ref, context, options), do: @provider.versions!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def tags(ref, context, options), do: @provider.tags(__MODULE__, ref, context, options)
       def tags!(ref, context, options), do: @provider.tags!(__MODULE__, ref, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def set_tags(ref, tags, context, options), do: @provider.set_tags(__MODULE__, ref, tags, context, options)
       def set_tags!(ref, tags, context, options), do: @provider.set_tags!(__MODULE__, ref, tags, context, options)
 
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       defoverridable [
         __cms__: 0,
         __cms__!: 0,

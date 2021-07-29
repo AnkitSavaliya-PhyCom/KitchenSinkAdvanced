@@ -60,6 +60,7 @@ Noizu.V3.CMS.Database.Article.VersionSequencer.Table.create(memory: [node()])
 Noizu.V3.CMS.Database.Article.Version.Table.create(memory: [node()])
 Noizu.V3.CMS.Database.Article.Version.Revision.Table.create(memory: [node()])
 Noizu.V3.CMS.Database.Article.Active.Version.Table.create(memory: [node()])
+Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.create(memory: [node()])
 
 # Smart Token
 Noizu.SmartToken.Database.TokenTable.create(memory: [node()])

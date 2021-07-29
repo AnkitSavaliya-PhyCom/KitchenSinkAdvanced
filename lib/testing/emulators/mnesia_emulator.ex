@@ -113,7 +113,8 @@ defmodule Noizu.Testing.Mnesia do
     def match(table, pattern, instance \\ :default) do
       values = Agent.get(emulator_handle(instance), fn(state) ->
         (state.tables[table][:records] || [])
-        |> Enum.filter(&(partial_compare(&1.record, pattern)))
+        |> Enum.filter(&( partial_compare( elem(&1, 1).record, pattern)))
+        |> Enum.map(&(table.coerce(elem(&1,1).record)))
       end)
       %Amnesia.Table.Select{values: values, coerce: table}
     end
@@ -274,16 +275,20 @@ defmodule Noizu.Testing.Mnesia do
                    :auto -> MockDB.match(table, selector, scenario)
                    {:filter, v} -> Enum.filter(v, &(MockDB.partial_compare(&1.record, selector)))
                    {:mock, v} -> v
-                   {:mock_mfa, {m,f,a}} when is_list(a) -> apply(m, f, [selector, mock_configuration] ++ a)
-                   {:mock_mfa, {m,f,a}} -> apply(m, f, [selector, mock_configuration, a])
-                   {:mock_mfa, {m,f}} -> apply(m, f, [selector, mock_configuration])
+                   {:mock_mfa, {m,f,a}} when is_list(a) -> apply(m, f, [selector, mock_configuration] ++ a) || MockDB.match(table, selector, scenario)
+                   {:mock_mfa, {m,f,a}} -> apply(m, f, [selector, mock_configuration, a]) || MockDB.match(table, selector, scenario)
+                   {:mock_mfa, {m,f}} -> apply(m, f, [selector, mock_configuration]) || MockDB.match(table, selector, scenario)
                    v when is_list(v) -> v
-                   v when is_function(v, 0) -> v.()
-                   v when is_function(v, 1) -> v.(selector)
-                   v when is_function(v, 2) -> v.(selector, mock_configuration)
+                   v when is_function(v, 0) -> v.() || MockDB.match(table, selector, scenario)
+                   v when is_function(v, 1) -> v.(selector) || MockDB.match(table, selector, scenario)
+                   v when is_function(v, 2) -> v.(selector, mock_configuration) || MockDB.match(table, selector, scenario)
                    v -> v
                  end
-      is_list(response) && %Amnesia.Table.Select{values: response, coerce: table} || response
+
+      cond do
+        is_list(response) -> %Amnesia.Table.Select{values: Enum.map(response, &(table.coerce(&1))), coerce: table}
+        :else -> response
+      end
     end
 
 

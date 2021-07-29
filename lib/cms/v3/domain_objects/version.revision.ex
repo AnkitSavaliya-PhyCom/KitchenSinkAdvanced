@@ -7,7 +7,7 @@ defmodule Noizu.V3.CMS.Version.Revision do
   use Noizu.V3.CMS.ArticleType.Versioning
   @vsn 1.0
   @sref "cms-article-revision"
-  @persistence_layer {Noizu.V3.CMS.Database, Noizu.V3.CMS.Database.Article.Version.Revision.Table}
+  @persistence_layer {Noizu.V3.CMS.Database, Noizu.V3.CMS.Database.Article.Version.Revision.Table, [cascade?: true, cascade_block?: true]}
   @auto_generate false
   defmodule Entity do
     Noizu.V3.CMS.ArticleType.Versioning.versioning_entity() do

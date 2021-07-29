@@ -119,13 +119,25 @@ defdatabase Noizu.V3.CMS.Database do
   end # end deftable
 
   #-----------------------------------------------------------------------------
-  # @Activee.Version.Table
+  # @Active.Version.Table
   #-----------------------------------------------------------------------------
-  deftable Article.Active.Version.Table, [:version, :revision], type: :set, index: [] do
+  deftable Article.Active.Version.Table, [:article, :version], type: :set, index: [] do
+    @type t :: %__MODULE__{
+                 article: any,
+                 version: any,
+               }
+  end # end deftable
+
+
+  #-----------------------------------------------------------------------------
+  # @Active.Version.Table
+  #-----------------------------------------------------------------------------
+  deftable Article.Active.Version.Revision.Table, [:version, :revision], type: :set, index: [] do
     @type t :: %__MODULE__{
                  version: any,
                  revision: any,
                }
   end # end deftable
+
 
 end

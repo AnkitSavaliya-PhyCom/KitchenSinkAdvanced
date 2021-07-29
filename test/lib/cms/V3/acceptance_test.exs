@@ -74,8 +74,40 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       assert post.title.markdown == "#My Post"
       assert post.title.html == "<h1>My Post</h1>\n"
 
+      #.................
+      # Verify Related Types.
+      #.................
 
+      # Version
+      version = Noizu.ERP.entity!(post.article_info.version)
+      assert version != nil
+      assert version.article == article
+      assert version.parent == nil
+      assert version.editor == post.article_info.editor
+      assert version.status == :pending
+      assert version.identifier == {article, expected_version_path}
 
+      # Revision
+      revision = Noizu.ERP.entity!(post.article_info.revision)
+      assert revision != nil
+      assert revision.identifier == {post.article_info.version, expected_revision}
+      assert revision.article == article
+      assert revision.version == post.article_info.version
+      assert revision.editor == post.article_info.editor
+      assert revision.status == :pending
+      assert revision.archive_type == :raw
+      assert revision.archive == post
+
+      # Active Revision
+      active_revision = Noizu.V3.CMS.Protocol.active_revision!(article, @context, [])
+      assert active_revision != nil
+      assert active_revision == post.article_info.revision
+
+      # Tags
+      # ... pending
+
+      # Indexes
+      # ... pending
     end
   end
 
