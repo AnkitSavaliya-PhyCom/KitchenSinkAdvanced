@@ -1,9 +1,6 @@
 defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
-
   defmodule Default do
-
-
     def __update_tags__(_m, _ref, _context, _options), do: nil
     def __update_tags__!(_m, _ref, _context, _options), do: nil
 
@@ -70,6 +67,63 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     def set_tags!(_m, _ref, _tags, _context, _options), do: nil
 
 
+
+
+    def __update_version__(m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
+      version = article_info.version |> Noizu.ERP.entity
+
+      #...
+      updated_version = version
+      #...
+      article_info = article_info.__struct__.overwrite(article_info, [
+        version: Noizu.ERP.ref(updated_version),
+      ], context, options)
+      Noizu.V3.CMS.Protocol.__set_article_info__(entity, article_info, context, options)
+    end
+
+    def __update_version__!(m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
+      version = article_info.version |> Noizu.ERP.entity!
+      #...
+      updated_version = version
+      #...
+      article_info = article_info.__struct__.overwrite!(article_info, [
+        version: Noizu.ERP.ref(updated_version),
+      ], context, options)
+      Noizu.V3.CMS.Protocol.__set_article_info__!(entity, article_info, context, options)
+    end
+
+    def __update_revision__(_m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
+      revision = article_info.revision |> Noizu.ERP.entity
+      #...
+      updated_revision = revision
+      #...
+      article_info = article_info.__struct__.overwrite(article_info, [
+        revision: Noizu.ERP.ref(updated_revision),
+        modified_on: updated_revision.time_stamp.modified_on,
+        editor: updated_revision.editor,
+        status: updated_revision.status,
+      ], context, options)
+      Noizu.V3.CMS.Protocol.__set_article_info__(entity, article_info, context, options)
+    end
+
+    def __update_revision__!(_m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
+      revision = article_info.revision |> Noizu.ERP.entity!
+      #...
+      updated_revision = revision
+      #...
+      article_info = article_info.__struct__.overwrite!(article_info, [
+        revision: Noizu.ERP.ref(updated_revision),
+        modified_on: updated_revision.time_stamp.modified_on,
+        editor: updated_revision.editor,
+        status: updated_revision.status,
+      ], context, options)
+      Noizu.V3.CMS.Protocol.__set_article_info__!(entity, article_info, context, options)
+    end
+
     def __initialize_version__(m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
       version_entity = Noizu.V3.CMS.Protocol.__cms__(entity, :version, context, options)
@@ -86,15 +140,15 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       cond do
         !version -> throw {:error, {:creating_version, :create_failed}}
         :else ->
-            article_info = article_info.__struct__.overwrite(article_info, [
-              version: Noizu.ERP.ref(version),
-              parent: Noizu.ERP.ref(article_info.version),
-              revision: nil
-            ], context, options)
-            entity = Noizu.V3.CMS.Protocol.__set_article_info__(entity, article_info, context, options)
-            revision = revision_repo.new_revision(entity, context, options)
-                       |> revision_repo.create(context, options[:create_options])
-            cond do
+          article_info = article_info.__struct__.overwrite(article_info, [
+            version: Noizu.ERP.ref(version),
+            parent: Noizu.ERP.ref(article_info.version),
+            revision: nil
+          ], context, options)
+          entity = Noizu.V3.CMS.Protocol.__set_article_info__(entity, article_info, context, options)
+          revision = revision_repo.new_revision(entity, context, options)
+                     |> revision_repo.create(context, options[:create_options])
+          cond do
             !revision -> {:error, :create_revision}
             :else ->
               m.make_active(entity, revision, context, options)
@@ -116,7 +170,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
               # Fin.
               entity
-            end
+          end
       end
     end
 
@@ -171,79 +225,62 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     end
 
     def __populate_version__(m, entity, context, options) do
-      # << if options[:nested_call] != :disabled
-      # version = Noizu.Cms.V2.Proto.get_version(entity, context, options)
-      #    version_ref = caller.cms_version().ref(version)
-      #
-      #    revision = Noizu.Cms.V2.Proto.get_version(entity, context, options)
-      #    revision_ref = caller.cms_revision().ref(revision)
-      #
-      #    # if active revision then update version table, otherwise only update revision.
-      #    active_revision_ref = caller.cms_revision_repo().active(version_ref, context, options)
-      #
-      #    if active_revision_ref do
-      #      if active_revision_ref == revision_ref || options[:active_revision] == true do
-      #        case caller.cms_version().update(entity, context, options) do
-      #          {:ok, _} ->
-      #            entity
-      #          e -> throw "1. populate_versioning_records error: #{inspect e}"
-      #        end
-      #      else
-      #        case caller.cms_revision().update(entity, context, options) do
-      #          {:ok, _} ->
-      #            entity
-      #          e -> throw "2. populate_versioning_records error: #{inspect e}"
-      #        end
-      #      end
-      #
-      #    else
-      #      options_a = put_in(options, [:active_revision], true)
-      #      case caller.cms_version().update(entity, context, options_a) do
-      #        {:ok, _} ->
-      #          entity
-      #        e ->
-      #          throw "3. populate_versioning_records error: #{inspect e}"
-      #      end
-      #    end
-      entity
+      cond do
+        options[:nested_call] -> entity
+        !options[:nested_call] ->
+          article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
+          active_revision = Noizu.V3.CMS.Protocol.active_revision(article_info.version, context, options)
+          active_revision_ref = Noizu.ERP.ref(active_revision)
+          cond do
+            !active_revision_ref ->
+              options_a = put_in(options, [:active_revision], true)
+              entity
+              |> m.__update_version__(context, options_a)
+              |> m.__update_revision__(context, options_a)
+
+            options[:active_revision]->
+              entity
+              |> m.__update_version__(context, options)
+              |> m.__update_revision__(context, options)
+
+            active_revision_ref == article_info.revision ->
+              entity
+              |> m.__update_version__(context, options)
+              |> m.__update_revision__(context, options)
+
+            :else ->
+              entity
+              |> m.__update_revision__(context, options)
+          end
+      end
     end
 
     def __populate_version__!(m, entity, context, options) do
-      # << if options[:nested_call] != :disabled
-      # version = Noizu.Cms.V2.Proto.get_version(entity, context, options)
-      #    version_ref = caller.cms_version().ref(version)
-      #
-      #    revision = Noizu.Cms.V2.Proto.get_version(entity, context, options)
-      #    revision_ref = caller.cms_revision().ref(revision)
-      #
-      #    # if active revision then update version table, otherwise only update revision.
-      #    active_revision_ref = caller.cms_revision_repo().active(version_ref, context, options)
-      #
-      #    if active_revision_ref do
-      #      if active_revision_ref == revision_ref || options[:active_revision] == true do
-      #        case caller.cms_version().update(entity, context, options) do
-      #          {:ok, _} ->
-      #            entity
-      #          e -> throw "1. populate_versioning_records error: #{inspect e}"
-      #        end
-      #      else
-      #        case caller.cms_revision().update(entity, context, options) do
-      #          {:ok, _} ->
-      #            entity
-      #          e -> throw "2. populate_versioning_records error: #{inspect e}"
-      #        end
-      #      end
-      #
-      #    else
-      #      options_a = put_in(options, [:active_revision], true)
-      #      case caller.cms_version().update(entity, context, options_a) do
-      #        {:ok, _} ->
-      #          entity
-      #        e ->
-      #          throw "3. populate_versioning_records error: #{inspect e}"
-      #      end
-      #    end
-      entity
+      cond do
+        options[:nested_call] -> entity
+        !options[:nested_call] ->
+          article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
+          active_revision = Noizu.V3.CMS.Protocol.active_revision!(article_info.version, context, options)
+          active_revision_ref = Noizu.ERP.ref(active_revision)
+          cond do
+            !active_revision_ref ->
+              options_a = put_in(options, [:active_revision], true)
+              entity
+              |> m.__update_revision__!(context, options_a)
+              |> m.__update_version__!(context, options_a)
+            options[:active_revision]->
+              entity
+              |> m.__update_revision__!(context, options)
+              |> m.__update_version__!(context, options)
+            active_revision_ref == article_info.revision ->
+              entity
+              |> m.__update_revision__!(context, options)
+              |> m.__update_version__!(context, options)
+            :else ->
+              entity
+              |> m.__update_revision__!(context, options)
+          end
+      end
     end
 
   end
@@ -276,6 +313,13 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
       def __cms_info__(entity, property, context, options), do: nil
       def __cms_info__!(entity, property, context, options), do: nil
+
+
+      def __update_version__(entity, context, options), do: @provider.__update_version__(__MODULE__, entity, context, options)
+      def __update_version__!(entity, context, options), do: @provider.__update_version__!(__MODULE__, entity, context, options)
+
+      def __update_revision__(entity, context, options), do: @provider.__update_revision__(__MODULE__, entity, context, options)
+      def __update_revision__!(entity, context, options), do: @provider.__update_revision__!(__MODULE__, entity, context, options)
 
       def __update_tags__(ref, context, options), do: @provider.__update_tags__(__MODULE__, ref, context, options)
       def __update_tags__!(ref, context, options), do: @provider.__update_tags__!(__MODULE__, ref, context, options)
