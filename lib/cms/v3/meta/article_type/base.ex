@@ -11,38 +11,55 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Base do
       @__nzdo__article_cms_manager Module.concat([@__nzdo__poly_base, CMS])
       def __cms_manager__(), do:  @__nzdo__article_cms_manager
 
-      def __article__(ref, _context, _options) do
-        # todo handle sref, ref, etc.
+      def article(ref, _context, _options) do
         Noizu.ERP.entity(ref)
       end
-      def __article__!(ref, _context, _options) do
-        # todo handle sref, ref, etc.
+      def article!(ref, _context, _options) do
         Noizu.ERP.entity!(ref)
       end
 
       if @__nzdo__poly_base == __MODULE__ do
         def __cms__(), do: __MODULE__
+        def __cms__!(), do: __MODULE__
         def __cms__(property), do: {__MODULE__, property}
+        def __cms__!(property), do: {__MODULE__, property}
       else
         def __cms__(), do: @__nzdo__poly_base.__cms__()
+        def __cms__!(), do: @__nzdo__poly_base.__cms__!()
         def __cms__(property), do: @__nzdo__poly_base.__cms__(property)
+        def __cms__!(property), do: @__nzdo__poly_base.__cms__!(property)
       end
 
 
 
-      def __cms_article__(ref, context, options) do
-        Noizu.V3.CMS.Protocol.__cms_article__(__article__(ref, context, options), context, options)
+      def __cms_info__(ref, context, options) do
+        Noizu.V3.CMS.Protocol.__cms_info__(article(ref, context, options), context, options)
       end
-      def __cms_article__!(ref, context, options) do
-        Noizu.V3.CMS.Protocol.__cms_article__!(__article__!(ref, context, options), context, options)
+      def __cms_info__!(ref, context, options) do
+        Noizu.V3.CMS.Protocol.__cms_info__!(article!(ref, context, options), context, options)
       end
 
-      def __cms_article__(ref, property, context, options) do
-        Noizu.V3.CMS.Protocol.__cms_article__(__article__(ref, context, options), property, context, options)
+      def __cms_info__(ref, property, context, options) do
+        Noizu.V3.CMS.Protocol.__cms_info__(article(ref, context, options), property, context, options)
       end
-      def __cms_article__!(ref, property, context, options) do
-        Noizu.V3.CMS.Protocol.__cms_article__!(__article__!(ref, context, options), property, context, options)
+      def __cms_info__!(ref, property, context, options) do
+        Noizu.V3.CMS.Protocol.__cms_info__!(article!(ref, context, options), property, context, options)
       end
+
+      defoverridable [
+        __cms_manager__: 0,
+        article: 3,
+        article: 3,
+        __cms__: 0,
+        __cms__!: 0,
+        __cms__: 1,
+        __cms__!: 1,
+        __cms_info__: 3,
+        __cms_info__!: 3,
+        __cms_info__: 4,
+        __cms_info__!: 4,
+      ]
+
     end
   end
 
