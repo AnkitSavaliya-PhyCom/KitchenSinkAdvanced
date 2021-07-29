@@ -112,16 +112,16 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       ref.__struct__.ref(identifier)
     end
 
-    def article_info(ref, _context, _options), do: ref.article_info
-    def article_info!(ref, _context, _options), do: ref.article_info
+    def article_info(_m, ref, _context, _options), do: ref.article_info
+    def article_info!(_m, ref, _context, _options), do: ref.article_info
 
-    def is_versioning_record?(_m, %{identifier: {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
-    def is_versioning_record?(_m,  %{identifier: {:version, {_identifier, _version}}}, _context, _options), do: true
-    def is_versioning_record?(_m, _ref, _context, _options), do: false
+    def versioning_record?(_m, %{identifier: {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
+    def versioning_record?(_m,  %{identifier: {:version, {_identifier, _version}}}, _context, _options), do: true
+    def versioning_record?(_m, _ref, _context, _options), do: false
 
-    def is_versioning_record!(_m, %{identifier: {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
-    def is_versioning_record!(_m,  %{identifier: {:version, {_identifier, _version}}}, _context, _options), do: true
-    def is_versioning_record!(_m, _ref, _context, _options), do: false
+    def versioning_record!(_m, %{identifier: {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
+    def versioning_record!(_m,  %{identifier: {:version, {_identifier, _version}}}, _context, _options), do: true
+    def versioning_record!(_m, _ref, _context, _options), do: false
 
   end
 
@@ -184,7 +184,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
         __cms_info__!: 4,
 
         __set_article_info__: 4,
-        __set_article_info__: 4,
+        __set_article_info__!: 4,
 
         __update_article_info__: 3,
         __update_article_info__!: 3,

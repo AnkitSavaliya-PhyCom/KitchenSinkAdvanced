@@ -183,12 +183,12 @@ defimpl Noizu.V3.CMS.Protocol, for: [Tuple, BitString] do
   def active_revision(ref, context, options), do: Noizu.ERP.entity(ref) |> Noizu.V3.CMS.Protocol.active_revision(ref, context, options)
   def active_revision!(ref, context, options), do: Noizu.ERP.entity!(ref) |> Noizu.V3.CMS.Protocol.active_revision!(ref, context, options)
 
-  def versioning_record?({:ref, _entity, {:version, {_identifier, _version}}}, _context, _options), true
-  def versioning_record?({:ref, _entity, {:revision, {_identifier, _version, _revision}}}, _context, _options), true
+  def versioning_record?({:ref, _entity, {:version, {_identifier, _version}}}, _context, _options), do: true
+  def versioning_record?({:ref, _entity, {:revision, {_identifier, _version, _revision}}}, _context, _options), do:  true
   def versioning_record?(ref, context, options), do: Noizu.ERP.entity(ref) |> Noizu.V3.CMS.Protocol.versioning_record?(ref, context, options)
 
-  def versioning_record!({:ref, _entity, {:version, {_identifier, _version}}}, _context, _options), true
-  def versioning_record!({:ref, _entity, {:revision, {_identifier, _version, _revision}}}, _context, _options), true
+  def versioning_record!({:ref, _entity, {:version, {_identifier, _version}}}, _context, _options), do: true
+  def versioning_record!({:ref, _entity, {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
   def versioning_record!(ref, context, options), do: Noizu.ERP.entity!(ref) |> Noizu.V3.CMS.Protocol.versioning_record!(ref, context, options)
 
 end

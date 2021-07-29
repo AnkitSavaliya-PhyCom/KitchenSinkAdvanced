@@ -162,7 +162,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       def pre_update_callback(entity, context, options) do
         options_a = put_in(options, [:nested_call], true)
         if (entity.identifier == nil), do: throw "Identifier not set"
-        if (!Noizu.V3.CMS.Proto.versioning_record?(entity, context, options)), do: throw "#{entity.__struct__} entities may only be persisted using cms revision ids"
+        if (!Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options)), do: throw "#{entity.__struct__} entities may only be persisted using cms revision ids"
         super(entity, context, options)
         |> Noizu.V3.CMS.Protocol.__update_article_info__(context, options_a)
         |> __cms_manager__().__populate_version__(context, options_a)
@@ -171,7 +171,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       def pre_update_callback!(entity, context, options) do
         options_a = put_in(options, [:nested_call], true)
         if (entity.identifier == nil), do: throw "Identifier not set"
-        if (!Noizu.V3.CMS.Proto.versioning_record!(entity, context, options)), do: throw "#{entity.__struct__} entities may only be persisted using cms revision ids"
+        if (!Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options)), do: throw "#{entity.__struct__} entities may only be persisted using cms revision ids"
         super(entity, context, options)
         |> Noizu.V3.CMS.Protocol.__update_article_info__!(context, options_a)
         |> __cms_manager__().__populate_version__!(context, options_a)

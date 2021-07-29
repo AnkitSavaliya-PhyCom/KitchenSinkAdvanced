@@ -55,15 +55,15 @@ defmodule Noizu.V3.CMS.Version do
       }
     end
 
-    def version_sequencer(_ref, _context, _optiosm), do: nil
-    def version_sequencer!( _ref, _context, _optiosm), do: nil
+    def version_sequencer(_ref, _context, _options), do: nil
+    def version_sequencer!( _ref, _context, _options), do: nil
 
     def next_version_path(article, version, context, options) do
       cond do
         version == nil -> {version_sequencer({article, {}}, context, options)}
         :else ->
           {:ref, _, {_article, path}} = version
-          List.to_tuple(Tuple.to_list(path), m.version_sequencer({article, path}))
+          List.to_tuple(Tuple.to_list(path) ++ [version_sequencer({article, path}, context, options)])
       end
     end
 
@@ -72,7 +72,7 @@ defmodule Noizu.V3.CMS.Version do
         version == nil -> {version_sequencer!({article, {}}, context, options)}
         :else ->
           {:ref, _, {_article, path}} = version
-          List.to_tuple(Tuple.to_list(path), version_sequencer!({article, path}))
+          List.to_tuple(Tuple.to_list(path) ++ [version_sequencer!({article, path}, context, options)])
       end
     end
 

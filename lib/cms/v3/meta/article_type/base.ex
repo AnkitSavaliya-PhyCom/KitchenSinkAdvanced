@@ -49,7 +49,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Base do
       defoverridable [
         __cms_manager__: 0,
         article: 3,
-        article: 3,
+        article!: 3,
         __cms__: 0,
         __cms__!: 0,
         __cms__: 1,
