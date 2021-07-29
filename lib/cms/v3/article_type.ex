@@ -19,9 +19,9 @@ defmodule Noizu.V3.CMS.ArticleType do
   defmacro article_cms_manager(options \\ [], [do: block]) do
     options = Macro.expand(options, __ENV__)
     quote do
-      use Noizu.V3.CMS.Meta.ArticleType.Base, unquote(options)
+      use Noizu.V3.CMS.Meta.ArticleType.CMS, unquote(options)
       unquote(block)
-      @before_compile Noizu.V3.CMS.Meta.ArticleType.Base
+      @before_compile Noizu.V3.CMS.Meta.ArticleType.CMS
     end
   end
 
@@ -43,7 +43,6 @@ defmodule Noizu.V3.CMS.ArticleType do
     options = update_in(options, [:extension_imp], &(&1 || Noizu.V3.CMS.Meta.ArticleType.Repo))
     Noizu.ElixirScaffolding.V3.Meta.DomainObject.Repo.__noizu_repo__(__CALLER__, options, block)
   end
-
 
 
 end

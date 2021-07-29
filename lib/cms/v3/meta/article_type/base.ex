@@ -18,18 +18,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Base do
         Noizu.ERP.entity!(ref)
       end
 
-      if @__nzdo__poly_base == __MODULE__ do
-        def __cms__(), do: __MODULE__
-        def __cms__!(), do: __MODULE__
-        def __cms__(property), do: {__MODULE__, property}
-        def __cms__!(property), do: {__MODULE__, property}
-      else
-        def __cms__(), do: @__nzdo__poly_base.__cms__()
-        def __cms__!(), do: @__nzdo__poly_base.__cms__!()
-        def __cms__(property), do: @__nzdo__poly_base.__cms__(property)
-        def __cms__!(property), do: @__nzdo__poly_base.__cms__!(property)
-      end
-
+      def __cms__(), do: __cms_manager__().__cms__()
+      def __cms__!(), do: __cms_manager__().__cms__!()
+      def __cms__(property), do: __cms_manager__().__cms__(property)
+      def __cms__!(property), do: __cms_manager__().__cms__!(property)
 
 
       def __cms_info__(ref, context, options) do

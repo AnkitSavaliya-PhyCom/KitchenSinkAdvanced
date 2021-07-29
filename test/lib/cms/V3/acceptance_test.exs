@@ -30,10 +30,10 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
   #----------------
   @context Noizu.ElixirCore.CallingContext.system()
   @cms_post  %Noizu.V3.CMS.Article.Post.Entity{
-    title: %MarkDown{markdown: "My Post"},
-    body: %MarkDown{markdown: "My Post Contents"},
+    title: MarkDown.new("#My Post"),
+    body: MarkDown.new("*My Body*"),
     attributes: %{},
-    article_info: %Noizu.V3.CMS.Article.Info{tags: MapSet.new(["test", "apple"])}
+    #article_info: %Noizu.V3.CMS.Article.Info{tags: MapSet.new(["test", "apple"])}
   }
 
   #==============================================
@@ -61,45 +61,20 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       # Setup Article
       post = @cms_post
       post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
-      post2 = Noizu.V3.CMS.Article.Repo.get!(post.identifier, @context)
-      IO.puts """
+      article = {:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier} = post.article_info.article
+      expected_revision = 1
+      expected_version_path = {1}
+      assert post.identifier == {:revision, {article_identifier, expected_version_path, expected_revision}}
+      assert post.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {{:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier}, expected_version_path}}
+      assert post.article_info.revision == {:ref, Noizu.V3.CMS.Version.Revision.Entity, {post.article_info.version, expected_revision}}
+
+      assert post.body.markdown == "*My Body*"
+      assert post.body.html == "<p><em>My Body</em></p>\n"
+
+      assert post.title.markdown == "#My Post"
+      assert post.title.html == "<h1>My Post</h1>\n"
 
 
-
-
-  #{inspect post}
-  +++++++++++++++
-  #{inspect post2}
-
-
-
-"""
-      article = post.article_info.article
-      {:ref, _, aid} = article
-
-      # Verify article
-      #assert post.identifier == {:revision, {aid, {1}, 1}}
-
-      # Verify Version Info
-      #assert post.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {post.article_info.article, {1}}}
-
-      # Create new Versions
-      #post_1v1 = %Noizu.V3.CMS.Article.Post.Entity{post| body: %Noizu.MarkdownField{markdown: "My Updated Contents 1"}} |> Noizu.V3.CMS.Article.CMS.Version.new!(@context)
-      #post_1v2 = %Noizu.V3.CMS.Article.Post.Entity{post| body: %Noizu.MarkdownField{markdown: "My Updated Contents 2"}} |> Noizu.V3.CMS.Article.CMS.Version.new!(@context)
-      #post_1v1v1 = %Noizu.V3.CMS.Article.Post.Entity{post_1v1| body: %Noizu.MarkdownField{markdown: "My Updated Contents 3"}} |> Noizu.V3.CMS.Article.CMS.Version.new!(@context)
-      #post_1v2v1 = %Noizu.V3.CMS.Article.Post.Entity{post_1v2| body: %Noizu.MarkdownField{markdown: "My Updated Contents 4"}} |> Noizu.V3.CMS.Article.CMS.Version.new!(@context)
-
-      # Verify Version Info
-      #assert post_1v1.article_info.version == {:ref, Noizu.V3.CMS.VersionEntity, {article, {1,1}}}
-      #assert post_1v2.article_info.version == {:ref, Noizu.V3.CMS.VersionEntity, {article, {1,2}}}
-      #assert post_1v1v1.article_info.version == {:ref, Noizu.V3.CMS.VersionEntity, {article, {1,1,1}}}
-      #assert post_1v2v1.article_info.version == {:ref, Noizu.V3.CMS.VersionEntity, {article, {1,2,1}}}
-
-      # Verify Identifiers
-      #assert post_1v1.identifier == {:revision, {aid, {1,1}, 1}}
-      #assert post_1v2.identifier == {:revision, {aid, {1,2}, 1}}
-      #assert post_1v1v1.identifier == {:revision, {aid, {1,1,1}, 1}}
-      #assert post_1v2v1.identifier == {:revision, {aid, {1,2,1}, 1}}
 
     end
   end

@@ -126,10 +126,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
     def __initialize_version__(m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
-      version_entity = Noizu.V3.CMS.Protocol.__cms__(entity, :version, context, options)
+      version_entity = Noizu.V3.CMS.Protocol.__cms__(entity, :version, context, options).__entity__()
       version_repo = version_entity.__repo__()
 
-      revision_entity = Noizu.V3.CMS.Protocol.__cms__(entity, :revision, context, options)
+      revision_entity = Noizu.V3.CMS.Protocol.__cms__(entity, :revision, context, options).__entity__()
       revision_repo = revision_entity.__repo__()
 
       # 1. Create Version
@@ -168,6 +168,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
               m.__update_tags__(entity, context, options)
               m.__update_index__(entity, context, options)
 
+              revision_entity.archive(revision, entity, context, options)
+              |> revision_repo.update(context, options[:create_options])
+
               # Fin.
               entity
           end
@@ -176,10 +179,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
     def __initialize_version__!(m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
-      version_entity = Noizu.V3.CMS.Protocol.__cms__!(entity, :version, context, options)
+      version_entity = Noizu.V3.CMS.Protocol.__cms__!(entity, :version, context, options).__entity__()
       version_repo = version_entity.__repo__()
 
-      revision_entity = Noizu.V3.CMS.Protocol.__cms__!(entity, :revision, context, options)
+      revision_entity = Noizu.V3.CMS.Protocol.__cms__!(entity, :revision, context, options).__entity__()
       revision_repo = revision_entity.__repo__()
 
       # 1. Create Version
@@ -217,6 +220,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
               # Update tags and index
               m.__update_tags__!(entity, context, options)
               m.__update_index__!(entity, context, options)
+
+              revision_entity.archive!(revision, entity, context, options)
+              |> revision_repo.update!(context, options[:create_options])
 
               # Fin.
               entity
@@ -296,7 +302,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       def __cms__() do
         Enum.map([:version, :revision, :article_info], &({&1, __cms__(&1)}))
       end
-      def __cms__() do
+      def __cms__!() do
         Enum.map([:version, :revision, :article_info], &({&1, __cms__!(&1)}))
       end
 
@@ -354,8 +360,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       def set_tags(ref, tags, context, options), do: @provider.set_tags(__MODULE__, ref, tags, context, options)
       def set_tags!(ref, tags, context, options), do: @provider.set_tags!(__MODULE__, ref, tags, context, options)
 
-      defoverridable
-      [
+      defoverridable [
         __cms__: 0,
         __cms__!: 0,
         __cms__: 1,

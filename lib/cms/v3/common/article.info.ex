@@ -75,7 +75,7 @@ defmodule Noizu.V3.CMS.Article.Info do
 
   def overwrite!(article_info, update, context, options), do: overwrite(article_info, update, context, options)
   def overwrite(article_info, update, context, options) do
-    Enum.reduce(article_info, article_info, fn({field, current}, acc) ->
+    Enum.reduce(Map.from_struct(article_info), article_info, fn({field, current}, acc) ->
       put_in(acc, [Access.key(field)], overwrite_field(field, update, current, context, options))
     end)
   end
@@ -83,7 +83,7 @@ defmodule Noizu.V3.CMS.Article.Info do
 
   def update!(article_info, update, context, options), do: update(article_info, update, context, options)
   def update(article_info, update, context, options) do
-    Enum.reduce(article_info, article_info, fn({field, current}, acc) ->
+    Enum.reduce(Map.from_struct(article_info), article_info, fn({field, current}, acc) ->
       put_in(acc, [Access.key(field)], update_field(field, update, current, context, options))
     end)
   end

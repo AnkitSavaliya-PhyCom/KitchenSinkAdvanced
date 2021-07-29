@@ -4,12 +4,13 @@
 #-------------------------------------------------------------------------------
 
 defmodule Noizu.V3.CMS.Version do
-  use Noizu.V3.CMS.ArticleType
+  use Noizu.V3.CMS.ArticleType.Versioning
   @vsn 1.0
   @sref "cms-article-version"
   @persistence_layer {Noizu.V3.CMS.Database, Noizu.V3.CMS.Database.Article.Version.Table}
+  @auto_generate false
   defmodule Entity do
-    Noizu.V3.CMS.ArticleType.article_entity() do
+    Noizu.V3.CMS.ArticleType.Versioning.versioning_entity() do
       identifier :integer
       internal_field :article
       internal_field :parent
@@ -20,7 +21,9 @@ defmodule Noizu.V3.CMS.Version do
   end
 
   defmodule Repo do
-    Noizu.V3.CMS.ArticleType.article_repo() do
+    alias Noizu.V3.CMS.Database.Article.VersionSequencer.Table, as: VersionSequencerTable
+
+    Noizu.V3.CMS.ArticleType.Versioning.versioning_repo() do
     end
 
     def new_version(entity, context, options) do
@@ -28,9 +31,9 @@ defmodule Noizu.V3.CMS.Version do
       article = article_info.article
       current_version = article_info.version
       version_path = next_version_path(article, article_info.version, context, options)
-      version_identifer = {article, version_path}
+      version_identifier = {article, version_path}
       %Noizu.V3.CMS.Version.Entity{
-        identifier: version_identifer,
+        identifier: version_identifier,
         article: article,
         parent: article_info.version,
         editor: article_info.editor,
@@ -44,9 +47,9 @@ defmodule Noizu.V3.CMS.Version do
       article = article_info.article
       current_version = article_info.version
       version_path = next_version_path!(article, article_info.version, context, options)
-      version_identifer = {article, version_path}
+      version_identifier = {article, version_path}
       %Noizu.V3.CMS.Version.Entity{
-        identifier: version_identifer,
+        identifier: version_identifier,
         article: article,
         parent: article_info.version,
         editor: article_info.editor,
@@ -55,8 +58,31 @@ defmodule Noizu.V3.CMS.Version do
       }
     end
 
-    def version_sequencer(_ref, _context, _options), do: nil
-    def version_sequencer!( _ref, _context, _options), do: nil
+    def version_sequencer(key, _context, _options) do
+      case VersionSequencerTable.read(key) do
+        v = %VersionSequencerTable{} ->
+          %VersionSequencerTable{v| sequence: v.sequence + 1}
+          |> VersionSequencerTable.write()
+          v.sequence + 1
+        nil ->
+          %VersionSequencerTable{identifier: key, sequence: 1}
+          |> VersionSequencerTable.write()
+          1
+      end
+    end
+
+    def version_sequencer!(key, _context, _options) do
+      case VersionSequencerTable.read!(key) do
+        v = %VersionSequencerTable{} ->
+          %VersionSequencerTable{v| sequence: v.sequence + 1}
+          |> VersionSequencerTable.write!()
+          v.sequence + 1
+        nil ->
+          %VersionSequencerTable{identifier: key, sequence: 1}
+          |> VersionSequencerTable.write!()
+          1
+      end
+    end
 
     def next_version_path(article, version, context, options) do
       cond do

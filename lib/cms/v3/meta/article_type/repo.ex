@@ -65,9 +65,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         # Force Unique
         entity = cond do
                    options[:nested_call] -> entity
-                   get(entity.identifier, Noizu.ElixirCore.CallingContext.system(context), options_a) ->
+                   v = get(entity.identifier, Noizu.ElixirCore.CallingContext.system(context), options_a) ->
                      # @todo if !is_version_record? we should specifically scan for any matching revisions.
-                     throw "[Create Exception] Record Exists: #{Noizu.ERP.sref(entity)}"
+                     throw "[Create Exception] Record Exists: #{v}"
                    :else -> entity
                  end
 
@@ -87,16 +87,14 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         entity = super(entity, context, options)
         versioning_record? = Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options)
         options_a = put_in(options, [:nested_call], true)
-
         # Force Unique
         entity = cond do
                    options[:nested_call] -> entity
-                   get!(entity.identifier, Noizu.ElixirCore.CallingContext.system(context), options_a) ->
+                   v = get!(entity.identifier, Noizu.ElixirCore.CallingContext.system(context), options_a) ->
                      # @todo if !is_version_record? we should specifically scan for any matching revisions.
-                     throw "[Create Exception] Record Exists: #{Noizu.ERP.sref(entity)}"
+                     throw "[Create Exception] Record Exists: #{inspect v}"
                    :else -> entity
                  end
-
         # Prepare Article Info and Version Details
         if versioning_record? do
           entity
@@ -129,8 +127,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                            __revision_to_id__(active_revision)
                        end
             super(identifier, context, options)
-        rescue e -> {:error, e}
-        catch e -> {:error, e}
+        rescue e -> {:error, Exception.format(:error, e, __STACKTRACE__)}
+        catch
+          :exit, e -> {:error, Exception.format(:error, e, __STACKTRACE__)}
+          e -> {:error, Exception.format(:error, e, __STACKTRACE__)}
         end
       end
 
@@ -150,9 +150,11 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                            active_revision = Noizu.V3.CMS.Protocol.active_revision!(cms_ref, context, options)
                            __revision_to_id__(active_revision)
                        end
-          super(identifier, context, options)
-        rescue e -> {:error, e}
-        catch e -> {:error, e}
+          identifier && super(identifier, context, options)
+        rescue e -> {:error, Exception.format(:error, e, __STACKTRACE__)}
+        catch
+          :exit, e -> {:error, Exception.format(:error, e, __STACKTRACE__)}
+          e -> {:error, Exception.format(:error, e, __STACKTRACE__)}
         end
       end
 
@@ -226,7 +228,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                      active_revision = Noizu.V3.CMS.Protocol.active_revision!(entity, context, options)
                                        |> Noizu.ERP.ref()
                      cond do
-                       !article_revision -> throw :article_revision_not_found
+                       !article_revision -> throw :article_revisdion_not_found
                        article_revision == active_revision -> throw :active_revision
                        :else ->
                          active_version = case active_revision do

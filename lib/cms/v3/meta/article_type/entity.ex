@@ -174,6 +174,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def versioning_record?(ref, context, options), do: Provider.versioning_record?(__MODULE__, ref, context, options)
       def versioning_record!(ref, context, options), do: Provider.versioning_record!(__MODULE__, ref, context, options)
 
+      def active_revision(ref, context, options), do: nil
+      def active_revision!(ref, context, options), do: nil
+
       defoverridable [
         __cms_manager__: 0,
         __cms__: 0,
@@ -199,6 +202,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
         versioning_record?: 3,
         versioning_record!: 3,
+
+        active_revision: 3,
+        active_revision!: 3,
 
       ]
     end
