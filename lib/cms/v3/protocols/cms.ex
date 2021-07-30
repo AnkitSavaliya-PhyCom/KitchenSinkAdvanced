@@ -41,6 +41,9 @@ defprotocol Noizu.V3.CMS.Protocol do
   def revision(ref, context, options)
   def revision!(ref, context, options)
 
+  def active_version(ref, context, options)
+  def active_version!(ref, context, options)
+
   def active_revision(ref, context, options)
   def active_revision!(ref, context, options)
 
@@ -91,6 +94,9 @@ defimpl Noizu.V3.CMS.Protocol, for: Any do
         def revision(ref, context, options), do: unquote(module).revision(ref, context, options)
         def revision!(ref, context, options), do: unquote(module).revision!(ref, context, options)
 
+        def active_version(ref, context, options), do: unquote(module).active_version(ref, context, options)
+        def active_version!(ref, context, options), do: unquote(module).active_version!(ref, context, options)
+
         def active_revision(ref, context, options), do: unquote(module).active_revision(ref, context, options)
         def active_revision!(ref, context, options), do: unquote(module).active_revision!(ref, context, options)
 
@@ -134,6 +140,9 @@ defimpl Noizu.V3.CMS.Protocol, for: Any do
 
   def revision(_ref, _context, _options), do: nil
   def revision!(_ref, _context, _options), do: nil
+
+  def active_version(_ref, _context, _options), do: nil
+  def active_version!(_ref, _context, _options), do: nil
 
   def active_revision(_ref, _context, _options), do: nil
   def active_revision!(_ref, _context, _options), do: nil
@@ -179,6 +188,9 @@ defimpl Noizu.V3.CMS.Protocol, for: [BitString] do
 
   def revision(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.revision(ref, context, options)
   def revision!(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.revision!(ref, context, options)
+
+  def active_version(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_version(ref, context, options)
+  def active_version!(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_version!(ref, context, options)
 
   def active_revision(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_revision(ref, context, options)
   def active_revision!(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_revision!(ref, context, options)
@@ -233,6 +245,9 @@ defimpl Noizu.V3.CMS.Protocol, for: [Tuple] do
 
   def revision(ref, context, options), do: apply_action(ref, :revision, [ref, context, options])
   def revision!(ref, context, options), do: apply_action(ref, :revision!, [ref, context, options])
+
+  def active_version(ref, context, options), do: apply_action(ref, :active_version, [ref, context, options])
+  def active_version!(ref, context, options), do: apply_action(ref, :active_version!, [ref, context, options])
 
   def active_revision(ref, context, options), do: apply_action(ref, :active_revision, [ref, context, options])
   def active_revision!(ref, context, options), do: apply_action(ref, :active_revision!, [ref, context, options])

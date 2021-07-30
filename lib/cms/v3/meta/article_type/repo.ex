@@ -66,9 +66,21 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #-----------------------------------------
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_create_callback(entity, context, options) do
-        entity = super(entity, context, options)
-        versioning_record? = Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options)
         options_a = put_in(options, [:nested_call], true)
+        {entity, versioning_record?} = cond do
+                                         entity.identifier ->
+                                           cond do
+                                             Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options) ->
+                                               override_options = put_in(options, [Access.key(:override_identifier)], true)
+                                               {super(entity, context, override_options), true}
+                                             :else ->
+                                               entity = super(entity, context, options)
+                                               {entity, Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options)}
+                                           end
+                                         :else ->
+                                           entity = super(entity, context, options)
+                                           {entity, Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options)}
+                                       end
 
         # Force Unique
         entity = cond do
@@ -93,9 +105,21 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_create_callback!(entity, context, options) do
-        entity = super(entity, context, options)
-        versioning_record? = Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options)
         options_a = put_in(options, [:nested_call], true)
+        {entity, versioning_record?} = cond do
+                                         entity.identifier ->
+                                           cond do
+                                             Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options) ->
+                                               override_options = put_in(options, [Access.key(:override_identifier)], true)
+                                               {super(entity, context, override_options), true}
+                                             :else ->
+                                               entity = super(entity, context, options)
+                                               {entity, Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options)}
+                                           end
+                                         :else ->
+                                           entity = super(entity, context, options)
+                                           {entity, Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options)}
+                                       end
         # Force Unique
         entity = cond do
                    options[:nested_call] -> entity

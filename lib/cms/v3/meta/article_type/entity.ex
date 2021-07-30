@@ -113,16 +113,55 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     end
 
 
-    def active_revision(m, %{article_info: article_info} = ref, context, options) do
-      m.__cms_manager__().active_revision(ref, context, options)
-    end
-    def active_revision(m, {:ref, m, identifier}, context, options) do
-      aid = case identifier do
+
+    def bare_identifier(identifier) do
+      case identifier do
         {:version, {aid, _version_path}} -> aid
         {:revision, {aid, _version_path, _rev}} -> aid
         aid when is_integer(aid) or is_atom(aid) -> aid
         :else -> nil
       end
+    end
+
+
+    def active_version(m, %{article_info: article_info} = ref, context, options) do
+      m.__cms_manager__().active_version(ref, context, options)
+    end
+    def active_version(m, {:ref, m, identifier}, context, options) do
+      aid = bare_identifier(identifier)
+      cond do
+        aid == nil -> nil
+        :else ->
+          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+            [av|_] -> av.version
+            _ -> nil
+          end
+      end
+    end
+
+
+    def active_version!(m, %{article_info: article_info} = ref, context, options) do
+      m.__cms_manager__().active_version!(ref, context, options)
+    end
+    def active_version!(m, {:ref, m, identifier}, context, options) do
+      aid = bare_identifier(identifier)
+      cond do
+        aid == nil -> nil
+        :else ->
+          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match!([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+            [av|_] -> av.version
+            _ -> nil
+          end
+      end
+    end
+
+
+
+    def active_revision(m, %{article_info: article_info} = ref, context, options) do
+      m.__cms_manager__().active_revision(ref, context, options)
+    end
+    def active_revision(m, {:ref, m, identifier}, context, options) do
+      aid = bare_identifier(identifier)
       cond do
         aid == nil -> nil
         :else ->
@@ -141,12 +180,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       m.__cms_manager__().active_revision!(ref, context, options)
     end
     def active_revision!(m, {:ref, m, identifier}, context, options) do
-      aid = case identifier do
-              {:version, {aid, _version_path}} -> aid
-              {:revision, {aid, _version_path, _rev}} -> aid
-              aid when is_integer(aid) or is_atom(aid) -> aid
-              :else -> nil
-            end
+      aid = bare_identifier(identifier)
       cond do
         aid == nil -> nil
         :else ->
@@ -244,6 +278,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def versioning_record!(ref, context, options), do: Provider.versioning_record!(__MODULE__, ref, context, options)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def active_version(ref, context, options), do: Provider.active_version(__MODULE__, ref, context, options)
+      def active_version!(ref, context, options), do: Provider.active_version!(__MODULE__, ref, context, options)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def active_revision(ref, context, options), do: Provider.active_revision(__MODULE__, ref, context, options)
       def active_revision!(ref, context, options), do: Provider.active_revision!(__MODULE__, ref, context, options)
 
@@ -273,6 +311,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
         versioning_record?: 3,
         versioning_record!: 3,
+
+        active_version: 3,
+        active_version!: 3,
 
         active_revision: 3,
         active_revision!: 3,

@@ -18,6 +18,72 @@ defmodule Noizu.V3.CMS.Version do
       internal_field :status
       internal_field :time_stamp, nil, Noizu.Scaffolding.V3.TimeStamp.PersistenceStrategy
     end
+
+
+
+    def overwrite_field(:time_stamp = field, source, current, _context, options) do
+      cond do
+        is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
+        is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
+        modified_on = source[:modified_on] ->
+          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+        :else ->
+          modified_on = options[:current_time] || DateTime.utc_now()
+          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+      end
+    end
+    def overwrite_field(field, source, current, _context, _options) do
+      cond do
+        is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
+        is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
+        :else -> current
+      end
+    end
+
+    def update_field(:editor = field, source, current, context, options) do
+      source[field] || options[:editor] || current || context.caller
+    end
+    def update_field(:status = field, source, current, context, options) do
+      overwrite_field(field, source, current, context, options)
+    end
+    def update_field(:time_stamp = field, source, current, context, options) do
+      cond do
+        is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
+        is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
+        modified_on = source[:modified_on] ->
+          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+        :else ->
+          modified_on = options[:current_time] || DateTime.utc_now()
+          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+      end
+    end
+    def update_field(field, source, current, _context, _options) do
+      cond do
+        current -> current
+        is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
+        is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
+        :else -> nil
+      end
+    end
+
+    def overwrite!(version, update, context, options), do: overwrite(version, update, context, options)
+    def overwrite(version, update, context, options) do
+      Enum.reduce(Map.from_struct(version), version, fn({field, current}, acc) ->
+        put_in(acc, [Access.key(field)], overwrite_field(field, update, current, context, options))
+      end)
+    end
+
+
+    def update!(version, update, context, options), do: update(version, update, context, options)
+    def update(version, update, context, options) do
+      Enum.reduce(Map.from_struct(version), version, fn({field, current}, acc) ->
+        put_in(acc, [Access.key(field)], update_field(field, update, current, context, options))
+      end)
+    end
+
+
+
+
   end
 
   defmodule Repo do

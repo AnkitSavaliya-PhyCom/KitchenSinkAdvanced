@@ -46,7 +46,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
   @tag :cms
   @tag :cms_v3
   @tag :cms_version_provider
-  test "Create Version" do
+  test "V3.CMS: Create Article and Article Version" do
     with_mocks([
       {Article.Table, [:passthrough], MockDB.Article.MockTable.config()},
       {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.config()},
@@ -108,6 +108,113 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
 
       # Indexes
       # ... pending
+
+
+      #-------------------------------------------
+      # Create Versions
+      #-------------------------------------------
+
+      #..........
+      # 1.1
+      expected_1v1_version_path = {1, 1}
+      expected_1v1_revision = 1
+      post_1v1 = %Noizu.V3.CMS.Article.Post.Entity{post| body: MarkDown.new("[Updated](Content)")}
+                 |> Noizu.V3.CMS.Article.CMS.new_version!(@context)
+      assert post_1v1.identifier == {:revision, {article_identifier, expected_1v1_version_path, expected_1v1_revision}}
+      assert post_1v1.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {{:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier}, expected_1v1_version_path}}
+      assert post_1v1.article_info.revision == {:ref, Noizu.V3.CMS.Version.Revision.Entity, {post_1v1.article_info.version, expected_1v1_revision}}
+      active_revision = Noizu.V3.CMS.Protocol.active_revision!(article, @context, [])
+      assert active_revision != nil
+      assert active_revision != post_1v1.article_info.revision
+
+      #...........
+      # 1.2
+      expected_1v2_version_path = {1, 2}
+      expected_1v2_revision = 1
+      post_1v2 = %Noizu.V3.CMS.Article.Post.Entity{post| body: MarkDown.new("[Updated](Content):2")}
+                 |> Noizu.V3.CMS.Article.CMS.new_version!(@context)
+      assert post_1v2.identifier == {:revision, {article_identifier, expected_1v2_version_path, expected_1v2_revision}}
+      assert post_1v2.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {{:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier}, expected_1v2_version_path}}
+      assert post_1v2.article_info.revision == {:ref, Noizu.V3.CMS.Version.Revision.Entity, {post_1v2.article_info.version, expected_1v2_revision}}
+      active_revision = Noizu.V3.CMS.Protocol.active_revision!(article, @context, [])
+      assert active_revision != nil
+      assert active_revision != post_1v2.article_info.revision
+
+      #.................
+      # 1.1.1
+      expected_1v1v1_version_path = {1, 1, 1}
+      expected_1v1v1_revision = 1
+      post_1v1v1 = %Noizu.V3.CMS.Article.Post.Entity{post_1v1| body: MarkDown.new("[Updated](Content):1.1.1")}
+                 |> Noizu.V3.CMS.Article.CMS.new_version!(@context)
+      assert post_1v1v1.identifier == {:revision, {article_identifier, expected_1v1v1_version_path, expected_1v1v1_revision}}
+      assert post_1v1v1.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {{:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier}, expected_1v1v1_version_path}}
+      assert post_1v1v1.article_info.revision == {:ref, Noizu.V3.CMS.Version.Revision.Entity, {post_1v1v1.article_info.version, expected_1v1v1_revision}}
+      active_revision = Noizu.V3.CMS.Protocol.active_revision!(article, @context, [])
+      assert active_revision != nil
+      assert active_revision != post_1v1v1.article_info.revision
+
+      #.................
+      # 1.2.1
+      expected_1v2v1_version_path = {1, 2, 1}
+      expected_1v2v1_revision = 1
+      post_1v2v1 = %Noizu.V3.CMS.Article.Post.Entity{post_1v2| body: MarkDown.new("[Updated](Content):1.2.1")}
+                   |> Noizu.V3.CMS.Article.CMS.new_version!(@context)
+      assert post_1v2v1.identifier == {:revision, {article_identifier, expected_1v2v1_version_path, expected_1v2v1_revision}}
+      assert post_1v2v1.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {{:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier}, expected_1v2v1_version_path}}
+      assert post_1v2v1.article_info.revision == {:ref, Noizu.V3.CMS.Version.Revision.Entity, {post_1v2v1.article_info.version, expected_1v2v1_revision}}
+      active_revision = Noizu.V3.CMS.Protocol.active_revision!(article, @context, [])
+      assert active_revision != nil
+      assert active_revision != post_1v2v1.article_info.revision
+    end
+  end
+
+
+  @tag :cms
+  @tag :cms_v3
+  @tag :cms_version_provider
+  test "V3.CMS: Create Revisions" do
+    with_mocks([
+      {Article.Table, [:passthrough], MockDB.Article.MockTable.config()},
+      {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.config()},
+      {Article.Tag.Table, [:passthrough], MockDB.Article.Tag.MockTable.config()},
+      {Article.VersionSequencer.Table, [:passthrough], MockDB.Article.VersionSequencer.MockTable.config()},
+      {Article.Version.Table, [:passthrough], MockDB.Article.Version.MockTable.config()},
+      {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
+      {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
+    ]) do
+      Noizu.Testing.Mnesia.Emulator.reset()
+
+      # Setup Article
+      post = @cms_post
+      post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
+      article = {:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier} = post.article_info.article
+      post_1v1 = %Noizu.V3.CMS.Article.Post.Entity{post| body: MarkDown.new("[Updated](Content)")}
+                 |> Noizu.V3.CMS.Article.CMS.new_version!(@context)
+
+      #..........
+      # New Revision, non active
+      post_1v1_rev2 = %Noizu.V3.CMS.Article.Post.Entity{post_1v1| body: MarkDown.new("[Updated](Content).rev")}
+                      |> Noizu.V3.CMS.Article.CMS.new_revision!(@context)
+
+      assert post_1v1_rev2.identifier == {:revision, {article_identifier, {1,1}, 2}}
+      assert post_1v1_rev2.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {{:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier}, {1,1}}}
+      assert post_1v1_rev2.article_info.revision == {:ref, Noizu.V3.CMS.Version.Revision.Entity, {post_1v1_rev2.article_info.version, 2}}
+      active_revision = Noizu.V3.CMS.Protocol.active_revision!(article, @context, [])
+      assert active_revision != nil
+      assert active_revision != post_1v1_rev2.article_info.revision
+
+      #..........
+      # New Revision, on active
+      post_rev2 = %Noizu.V3.CMS.Article.Post.Entity{post| body: MarkDown.new("[Updated](Content).rev")}
+                      |> Noizu.V3.CMS.Article.CMS.new_revision!(@context)
+
+      assert post_rev2.identifier == {:revision, {article_identifier, {1}, 2}}
+      assert post_rev2.article_info.version == {:ref, Noizu.V3.CMS.Version.Entity, {{:ref, Noizu.V3.CMS.Article.Post.Entity, article_identifier}, {1}}}
+      assert post_rev2.article_info.revision == {:ref, Noizu.V3.CMS.Version.Revision.Entity, {post_rev2.article_info.version, 2}}
+      active_revision = Noizu.V3.CMS.Protocol.active_revision!(article, @context, [])
+      assert active_revision != nil
+      assert active_revision == post_rev2.article_info.revision
+
     end
   end
 
