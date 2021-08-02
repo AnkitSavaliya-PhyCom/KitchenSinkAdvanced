@@ -1,6 +1,10 @@
 defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
   defmodule Default do
+    @revision_format ~r/^(.*)-(.*)@([0-9a-zA-Z][0-9a-zA-Z\.]*)-([0-9a-zA-Z]+)$/
+    @version_format ~r/^(.*)-(.*)@([0-9a-zA-Z][0-9a-zA-Z\.]*)$/
+    @article_format ~r/^(.*)-(.*)$/
+
     def __cms_info__(m, ref, _context, _options), do: []
     def __cms_info__!(m, ref, _context, _options), do: []
 
@@ -253,6 +257,182 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       end
     end
 
+    #------------------------------
+    # id_to_string
+    #------------------------------
+    def id_to_string(caller, identifier) do
+      case identifier do
+        nil -> nil
+        {:revision, {e,i,v,r}} ->
+          cond do
+            i == nil -> {:error, {:unsupported, identifier}}
+            !is_tuple(v) -> {:error, {:unsupported, identifier}}
+            r == nil -> {:error, {:unsupported, identifier}}
+            !(is_integer(r) || is_bitstring(r) || is_atom(r)) -> {:error, {:unsupported, identifier}}
+            String.contains?("#{r}", ["-", "@"]) -> {:error, {:unsupported, identifier}}
+            vp = caller.version_path_to_string(v) ->
+              case caller.article_id_to_string(i) do
+                {:ok, id} ->
+                  article_subtype = e.sref_subtype()
+                  {:ok, "{#{id}-#{article_subtype}@#{vp}-#{r}}"}
+                _ -> {:error, {:unsupported, identifier}}
+              end
+            true -> {:error, {:unsupported, identifier}}
+          end
+        {:version, {e, i,v}} ->
+          cond do
+            i == nil -> {:error, {:unsupported, identifier}}
+            !is_tuple(v) -> {:error, {:unsupported, identifier}}
+            vp = caller.version_path_to_string(v) ->
+              case caller.article_id_to_string(i) do
+                {:ok, id} ->
+                  article_subtype = e.sref_subtype()
+                  {:ok, "{#{id}-#{article_subtype}@#{vp}}"}
+                _ -> {:error, {:unsupported, identifier}}
+              end
+            true -> {:error, {:unsupported, identifier}}
+          end
+        _ ->
+          case caller.article_id_to_string(identifier) do
+            {:ok, v} ->
+              article_subtype = caller.sref_subtype()
+              {:ok, "{#{v}-#{article_subtype}}"}
+            v -> v
+          end
+      end
+    end
+
+    #------------------------------
+    # version_path_to_string/2
+    #------------------------------
+    def version_path_to_string(_caller, version_path) do
+      v_l = Tuple.to_list(version_path)
+      v_err = Enum.any?(v_l, fn(x) ->
+        cond do
+          x == nil -> true
+          !(is_bitstring(x) || is_integer(x) || is_atom(x)) -> true
+          String.contains?("#{x}", [".", "-", "@"]) -> true
+          true -> false
+        end
+      end)
+      cond do
+        length(v_l) == 0 -> nil
+        v_err -> nil
+        true -> Enum.map(v_l, &("#{&1}")) |> Enum.join(".")
+      end
+    end
+
+    #------------------------------
+    # article_id_to_string
+    #------------------------------
+    @doc """
+      override this if your entity type uses string values, nested refs, etc. for it's identifier.
+    """
+    def article_id_to_string(_caller, identifier) do
+      cond do
+        is_integer(identifier) -> {:ok, "#{identifier}"}
+        is_atom(identifier) -> {:ok, "#{identifier}"}
+        is_bitstring(identifier) -> {:ok, "#{identifier}"}
+        true -> {:error, {:unsupported, identifier}}
+      end
+    end
+
+
+    #------------------------------
+    # string_to_id
+    #------------------------------
+    def string_to_id(_caller, nil), do: nil
+    def string_to_id(caller, identifier) when is_bitstring(identifier) do
+      case identifier do
+        "ref." <> _ -> {:error, {:unsupported, identifier}}
+        _ ->
+          cond do
+            Regex.match?(@revision_format, identifier) ->
+              case Regex.run(@revision_format, identifier) do
+                [_, identifier, type, version, revision] ->
+                  case caller.article_string_to_id(identifier) do
+                    {:ok, i} ->
+                      version_path = String.split(version, ".")
+                                     |> Enum.map(
+                                          fn(x) ->
+                                            case Integer.parse(x) do
+                                              {v, ""} -> v
+                                              _ -> x
+                                            end
+                                          end)
+                                     |> List.to_tuple()
+                      revision = case Integer.parse(revision) do
+                                   {v, ""} -> v
+                                   _ -> revision
+                                 end
+                      type = caller.__cms_manager__().sref_subtype_module(type)
+                      {:revision, {type, i, version_path, revision}}
+                    _ -> {:error, {:unsupported, identifier}}
+                  end
+                _ ->  {:error, {:unsupported, identifier}}
+              end
+
+            Regex.match?(@version_format, identifier) ->
+              case Regex.run(@version_format, identifier) do
+                [_, identifier, type, version] ->
+                  case caller.article_string_to_id(identifier) do
+                    {:ok, i} ->
+                      version_path = String.split(version, ".")
+                                     |> Enum.map(
+                                          fn(x) ->
+                                            case Integer.parse(x) do
+                                              {v, ""} -> v
+                                              _ -> x
+                                            end
+                                          end)
+                                     |> List.to_tuple()
+                      type = caller.__cms_manager__().sref_subtype_module(type)
+                      {:version, {type, i, version_path}}
+                    _ -> {:error, {:unsupported, identifier}}
+                  end
+                _ ->  {:error, {:unsupported, identifier}}
+              end
+
+            Regex.match?(@article_format, identifier) ->
+              case Regex.run(@article_format, identifier) do
+                [_, identifier, type] ->
+                  case caller.article_string_to_id(identifier) do
+                    {:ok, i} ->
+                      type = caller.__cms_manager__().sref_subtype_module(type)
+                      {:article, {type, i}}
+                    _ -> {:error, {:unsupported, identifier}}
+                  end
+                _ ->  {:error, {:unsupported, identifier}}
+              end
+
+            true ->
+              caller.article_string_to_id(identifier)
+          end
+      end
+    end
+    def string_to_id(_caller, i), do: {:error, {:unsupported, i}}
+
+
+    #------------------------------
+    # article_string_to_id
+    #------------------------------
+    @doc """
+      override this if your entity type uses string values, nested refs, etc. for it's identifier.
+    """
+    def article_string_to_id(_caller, nil), do: nil
+    def article_string_to_id(_caller, identifier) when is_bitstring(identifier) do
+      case identifier do
+        "ref." <> _ -> {:error, {:unsupported, identifier}}
+        _ ->
+          case Integer.parse(identifier) do
+            {id, ""} -> {:ok, id}
+            v -> {:error, {:parse, v}}
+          end
+      end
+    end
+    def article_string_to_id(_caller, i), do: {:error, {:unsupported, i}}
+
+
 
   end
 
@@ -338,6 +518,41 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def revision!(ref, context, options), do: Provider.revision!(__MODULE__, ref, context, options)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def version_path_to_string(version_path), do: Provider.version_path_to_string(__MODULE__, version_path)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def article_id_to_string(identifier), do: Provider.article_id_to_string(__MODULE__, identifier)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def id_to_string(_type, identifier), do: Provider.id_to_string(__MODULE__, identifier)
+      def id_to_string(identifier), do: Provider.id_to_string(__MODULE__, identifier)
+
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def string_to_id(_type, identifier), do: Provider.string_to_id(__MODULE__, identifier)
+      def string_to_id(identifier), do: Provider.string_to_id(__MODULE__, identifier)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def article_string_to_id(identifier), do: Provider.article_string_to_id(__MODULE__, identifier)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def ref("ref.#{@__nzdo__sref}{" <> id) do
+        identifier = case string_to_id(String.slice(id, 0..-2)) do
+                       {:ok, v} -> v
+                       {:error, _} -> nil
+                       v -> v
+                     end
+        case identifier do
+          {:revision, {type, aid, version, revision}} -> {:ref, type, identifier}
+          {:version, {type, aid, version}} -> {:ref, type, identifier}
+          {:article, {type, aid}} -> {:ref, type, aid}
+          _ -> nil
+        end
+      end
+      def ref(ref), do: super(ref)
+
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       defoverridable [
         __cms_manager__: 0,
         __cms__: 0,
@@ -372,6 +587,15 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
         active_revision: 4,
         active_revision!: 4,
+
+        version_path_to_string: 1,
+        article_id_to_string: 1,
+        id_to_string: 1,
+        id_to_string: 2,
+        string_to_id: 1,
+        string_to_id: 2,
+        article_string_to_id: 1,
+        ref: 1,
       ]
     end
   end

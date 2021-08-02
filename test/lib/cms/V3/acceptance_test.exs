@@ -836,7 +836,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
 
 
   @tag :cms
-  @tag :cms_v3_wip
+  @tag :cms_v3
   @tag :cms_built_in
   test "Article - Sref" do
     with_mocks([
@@ -854,8 +854,9 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       # Setup Article
       post = @cms_post
       post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
-      #sref = Noizu.V3.CMS.Article.Entity.sref(post)
-      #IO.inspect sref
+      {:revision, {Noizu.V3.CMS.Article.Post.Entity, aid, _version, _revision}} = post.identifier
+      sref = Noizu.V3.CMS.Article.Entity.sref(post)
+      assert sref == "ref.cms{#{aid}-post@1-1}"
     end
   end
 
@@ -863,17 +864,11 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
   @tag :cms
   @tag :cms_v3
   test "Extended ERP Revision Support - sref to ref happy path" do
-    # ref = Noizu.Cms.V2.Article.PostEntity.ref("ref.cms-entry.1234@1.2.1-432")
-    #    assert ref == {:ref, Noizu.Cms.V2.ArticleEntity, {:revision, {1234, {1, 2, 1}, 432}}}
-    #
-    #    ref = Noizu.Cms.V2.Article.PostEntity.ref("ref.cms-entry.1234@1.2.1-Tiger")
-    #    assert ref == {:ref, Noizu.Cms.V2.ArticleEntity, {:revision, {1234, {1, 2, 1}, "Tiger"}}}
-    #
-    #    ref = Noizu.Cms.V2.Article.PostEntity.ref("ref.cms-entry.1234@1.2.Omega")
-    #    assert ref == {:ref, Noizu.Cms.V2.ArticleEntity, {:version, {1234, {1, 2, "Omega"}}}}
-    #
-    #    ref = Noizu.Cms.V2.Article.PostEntity.ref("ref.cms-entry.1234")
-    #    assert ref == {:ref, Noizu.Cms.V2.ArticleEntity, 1234}
+    ref = Noizu.V3.CMS.Article.Entity.ref("ref.cms{1234-post@1.2.1-432}")
+    assert ref == {:ref, Noizu.V3.CMS.Article.Post.Entity, {:revision, {Noizu.V3.CMS.Article.Post.Entity, 1234, {1,2,1}, 432}}}
+
+    ref = Noizu.V3.CMS.Article.Entity.ref("ref.cms{1234-post}")
+    assert ref == {:ref, Noizu.V3.CMS.Article.Post.Entity, 1234}
   end
 
   @tag :cms

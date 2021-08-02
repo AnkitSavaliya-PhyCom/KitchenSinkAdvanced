@@ -12,7 +12,7 @@ defmodule Noizu.V3.CMS.Article do
   @persistence_layer {Noizu.V3.CMS.Database, Noizu.V3.CMS.Database.Article.Table, cascade?: true, cascade_block?: true}
   defmodule Entity do
     Noizu.V3.CMS.ArticleType.article_entity() do
-      identifier :integer
+      identifier :compound
 
       public_field :title
       public_field :body
@@ -21,6 +21,9 @@ defmodule Noizu.V3.CMS.Article do
       internal_field :article_info
       internal_field :time_stamp, nil, Noizu.Scaffolding.V3.TimeStamp.PersistenceStrategy
     end
+
+    def sref_subtype(), do: "article"
+
   end
 
   defmodule Repo do
@@ -31,6 +34,12 @@ defmodule Noizu.V3.CMS.Article do
   defmodule CMS do
     Noizu.V3.CMS.ArticleType.article_cms_manager() do
     end
+
+    def sref_subtype_module("article"), do: Noizu.V3.CMS.Article.Entity
+    def sref_subtype_module("post"), do: Noizu.V3.CMS.Article.Post.Entity
+    def sref_subtype_module("file"), do: Noizu.V3.CMS.Article.File.Entity
+    def sref_subtype_module("image"), do: Noizu.V3.CMS.Article.Image.Entity
+
   end
 
 

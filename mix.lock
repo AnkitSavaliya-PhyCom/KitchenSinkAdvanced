@@ -26,7 +26,7 @@
   "noizu_core": {:git, "https://github.com/noizu/ElixirCore.git", "7e7de908792fec82b7d4d09431d0d696f7250cb1", [tag: "1.0.10"]},
   "noizu_mnesia_versioning": {:git, "https://github.com/noizu/MnesiaVersioning.git", "c295e3465801974c9ec4bb6d2769a1b551832370", [tag: "0.1.9"]},
   "noizu_rule_engine": {:git, "https://github.com/noizu/RuleEngine.git", "ccfd9f3451cc975d3e76a8f28b7e16165c21c45a", [tag: "0.2.0"]},
-  "noizu_scaffolding": {:git, "git@github.com:noizu-labs/ElixirScaffoldingAdvanced.git", "196422e0b51098d4a8dfd4a9ba926630536cbf1e", [branch: "master"]},
+  "noizu_scaffolding": {:git, "git@github.com:noizu-labs/ElixirScaffoldingAdvanced.git", "eaeae587a12beb2ad7439dad4cfbe6f77d738a2a", [branch: "master"]},
   "noizu_simple_pool": {:git, "git@github.com:noizu-labs/SimplePoolAdvanced.git", "2d2f4ddc6fb141cc16e3f55fa2377b10d866eeb9", [branch: "master"]},
   "parse_trans": {:hex, :parse_trans, "3.3.0", "09765507a3c7590a784615cfd421d101aec25098d50b89d7aa1d66646bc571c1", [:rebar3], [], "hexpm", "17ef63abde837ad30680ea7f857dd9e7ced9476cdd7b0394432af4bfc241b960"},
   "phoenix": {:hex, :phoenix, "1.3.1", "dc9fb380bd9afd002882c960aa066098d44bdb93094cf09db38173b933e462b6", [:mix], [{:cowboy, "~> 1.0", [hex: :cowboy, repo: "hexpm", optional: true]}, {:phoenix_pubsub, "~> 1.0", [hex: :phoenix_pubsub, repo: "hexpm", optional: false]}, {:plug, "~> 1.3.3 or ~> 1.4", [hex: :plug, repo: "hexpm", optional: false]}, {:poison, "~> 2.2 or ~> 3.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm", "652b61213dbe010d0eddf44554b3731379d8cb46f68b4d4c32836858329d2895"},
