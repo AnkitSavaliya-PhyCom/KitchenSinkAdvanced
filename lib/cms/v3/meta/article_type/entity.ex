@@ -103,8 +103,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
     def aref(_m, ref, _context, _options) do
       identifier = case ref.identifier do
-                     {:revision, {id, _version_path, _revision_id}} -> id
-                     {:version, {id, _version_path}} -> id
+                     {:revision, {_entity, id, _version_path, _revision_id}} -> id
+                     {:version, {_entity, id, _version_path}} -> id
                      identifier when is_integer(identifier) -> identifier
                      identifier when is_atom(identifier) -> identifier
                      _ -> nil
@@ -116,8 +116,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
     def bare_identifier(identifier) do
       case identifier do
-        {:version, {aid, _version_path}} -> aid
-        {:revision, {aid, _version_path, _rev}} -> aid
+        {:version, {_entity, aid, _version_path}} -> aid
+        {:revision, {_entity, aid, _version_path, _rev}} -> aid
         aid when is_integer(aid) or is_atom(aid) -> aid
         :else -> nil
       end
@@ -195,6 +195,22 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       end
     end
 
+    def active_revision(_m, _ref, version, _context, _options) do
+      version = Noizu.ERP.ref(version)
+      cond do
+        ar = version && Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read(version) -> ar.revision
+        :else -> nil
+      end
+    end
+
+    def active_revision!(_m, _ref, version, _context, _options) do
+      version = Noizu.ERP.ref(version)
+      cond do
+        ar = version && Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read!(version) -> ar.revision
+        :else -> nil
+      end
+    end
+
     def article_info(_m, %{article_info: article_info}, _context, _options), do: article_info
     def article_info(m, ref, _context, _options) do
       if entity = m.entity(ref), do: entity.article_info
@@ -205,12 +221,12 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       if entity = m.entity(ref), do: entity.article_info
     end
 
-    def versioning_record?(_m, %{identifier: {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
-    def versioning_record?(_m,  %{identifier: {:version, {_identifier, _version}}}, _context, _options), do: true
+    def versioning_record?(_m, %{identifier: {:revision, {_entity, _identifier, _version, _revision}}}, _context, _options), do: true
+    def versioning_record?(_m,  %{identifier: {:version, {_entity, _identifier, _version}}}, _context, _options), do: true
     def versioning_record?(_m, _ref, _context, _options), do: false
 
-    def versioning_record!(_m, %{identifier: {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
-    def versioning_record!(_m,  %{identifier: {:version, {_identifier, _version}}}, _context, _options), do: true
+    def versioning_record!(_m, %{identifier: {:revision, {_entity, _identifier, _version, _revision}}}, _context, _options), do: true
+    def versioning_record!(_m,  %{identifier: {:version, {_entity, _identifier, _version}}}, _context, _options), do: true
     def versioning_record!(_m, _ref, _context, _options), do: false
 
   end
@@ -228,7 +244,6 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
   def post_defstruct(options) do
     options = Macro.expand(options, __ENV__)
     article_type = options[:article_type] || :default
-    macro_file = __ENV__.file
     quote do
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       alias Noizu.V3.CMS.Meta.ArticleType.Entity.Default, as: Provider
@@ -236,7 +251,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__(), do: put_in(@__nzdo__poly_base.__cms__(), [:article_type], unquote(article_type))
-      def __cms__(), do: put_in(@__nzdo__poly_base.__cms__!(), [:article_type], unquote(article_type))
+      def __cms__!(), do: put_in(@__nzdo__poly_base.__cms__!(), [:article_type], unquote(article_type))
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__(:article_type), do: unquote(article_type)
@@ -286,6 +301,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def active_revision!(ref, context, options), do: Provider.active_revision!(__MODULE__, ref, context, options)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def active_revision(ref, version, context, options), do: Provider.active_revision(__MODULE__, ref, version, context, options)
+      def active_revision!(ref, version, context, options), do: Provider.active_revision!(__MODULE__, ref, version, context, options)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       defoverridable [
         __cms_manager__: 0,
         __cms__: 0,
@@ -318,6 +337,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
         active_revision: 3,
         active_revision!: 3,
 
+        active_revision: 4,
+        active_revision!: 4,
       ]
     end
   end

@@ -11,7 +11,6 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Versioning.Repo do
   end
 
   def post_defstruct(_options) do
-    macro_file = __ENV__.file
     quote do
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
 

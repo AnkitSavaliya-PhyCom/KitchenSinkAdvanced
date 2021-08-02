@@ -1,11 +1,58 @@
 defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
   defmodule Default do
-    def __update_tags__(_m, _ref, _context, _options), do: nil
-    def __update_tags__!(_m, _ref, _context, _options), do: nil
+    def __update_tags__(_m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
+      Noizu.V3.CMS.Database.Article.Tag.Table.delete(article_info.article)
+      if (article_info.tags) do
+          Enum.map(MapSet.to_list(article_info.tags), fn(tag) ->
+            %Noizu.V3.CMS.Database.Article.Tag.Table{article: article_info.article, tag: tag} |> Noizu.V3.CMS.Database.Article.Tag.Table.write()
+          end)
+      end
+    end
 
-    def __update_index__(_m, _ref, _context, _options), do: nil
-    def __update_index__!(_m, _ref, _context, _options), do: nil
+    def __update_tags__!(_m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
+      Noizu.V3.CMS.Database.Article.Tag.Table.delete!(article_info.article)
+      if (article_info.tags) do
+        Enum.map(MapSet.to_list(article_info.tags), fn(tag) ->
+          %Noizu.V3.CMS.Database.Article.Tag.Table{article: article_info.article, tag: tag} |> Noizu.V3.CMS.Database.Article.Tag.Table.write!()
+        end)
+      end
+    end
+
+    def __update_index__(_m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
+      %Noizu.V3.CMS.Database.Article.Index.Table{
+        article: article_info.article,
+        status: article_info.status,
+        manager: article_info.manager,
+        article_type: article_info.article_type,
+        editor: article_info.editor,
+        created_on: article_info.time_stamp.created_on && DateTime.to_unix(article_info.time_stamp.created_on),
+        modified_on: article_info.time_stamp.modified_on && DateTime.to_unix(article_info.time_stamp.modified_on),
+        active_version: article_info.version,
+        active_revision: article_info.revision,
+      } |> Noizu.V3.CMS.Database.Article.Index.Table.write()
+    end
+
+
+
+    def __update_index__!(_m, entity, context, options) do
+      article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
+      %Noizu.V3.CMS.Database.Article.Index.Table{
+        article: article_info.article,
+        status: article_info.status,
+        manager: article_info.manager,
+        article_type: article_info.article_type,
+        editor: article_info.editor,
+        created_on: article_info.time_stamp.created_on && DateTime.to_unix(article_info.time_stamp.created_on),
+        modified_on: article_info.time_stamp.modified_on && DateTime.to_unix(article_info.time_stamp.modified_on),
+        active_version: article_info.version,
+        active_revision: article_info.revision,
+      } |> Noizu.V3.CMS.Database.Article.Index.Table.write!()
+    end
+
 
     def make_active(m, entity, for_version, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
@@ -304,7 +351,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
               identifier = Noizu.ERP.id(article_info.article)
               {:ref, _, {{:ref, _v, {_article, version_path}}, revision_number}} = article_info.revision
-              qualified_identifier = {:revision, {identifier, version_path, revision_number}}
+              qualified_identifier = {:revision, {entity.__struct__, identifier, version_path, revision_number}}
               entity = put_in(entity, [Access.key(:identifier)], qualified_identifier)
 
               revision_entity.archive(revision, entity, context, options)
@@ -361,7 +408,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
               identifier = Noizu.ERP.id(article_info.article)
               {:ref, _, {{:ref, _v, {_article, version_path}}, revision_number}} = article_info.revision
-              qualified_identifier = {:revision, {identifier, version_path, revision_number}}
+              qualified_identifier = {:revision, {entity.__struct__, identifier, version_path, revision_number}}
               entity = put_in(entity, [Access.key(:identifier)], qualified_identifier)
 
               revision_entity.archive!(revision, entity, context, options)
@@ -388,7 +435,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         options[:nested_call] -> entity
         !options[:nested_call] ->
           article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
-          active_revision = Noizu.V3.CMS.Protocol.active_revision(article_info.version, context, options)
+          active_revision = Noizu.V3.CMS.Protocol.active_revision(entity, context, options)
           active_revision_ref = Noizu.ERP.ref(active_revision)
           cond do
             !active_revision_ref ->
@@ -398,14 +445,24 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
               |> m.__update_revision__(context, options_a)
 
             options[:active_revision]->
+              entity = entity
+                       |> m.__update_version__(context, options)
+                       |> m.__update_revision__(context, options)
+
+              m.__update_tags__(entity, context, options)
+              m.__update_index__(entity, context, options)
+              m.make_active(entity, context, options)
               entity
-              |> m.__update_version__(context, options)
-              |> m.__update_revision__(context, options)
 
             active_revision_ref == article_info.revision ->
+              entity = entity
+                       |> m.__update_version__(context, options)
+                       |> m.__update_revision__(context, options)
+
+              m.__update_tags__(entity, context, options)
+              m.__update_index__(entity, context, options)
+              m.make_active(entity, context, options)
               entity
-              |> m.__update_version__(context, options)
-              |> m.__update_revision__(context, options)
 
             :else ->
               entity
@@ -419,7 +476,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         options[:nested_call] -> entity
         !options[:nested_call] ->
           article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
-          active_revision = Noizu.V3.CMS.Protocol.active_revision!(article_info.version, context, options)
+          active_revision = Noizu.V3.CMS.Protocol.active_revision!(entity, context, options)
           active_revision_ref = Noizu.ERP.ref(active_revision)
           cond do
             !active_revision_ref ->
@@ -428,13 +485,25 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
               |> m.__update_revision__!(context, options_a)
               |> m.__update_version__!(context, options_a)
             options[:active_revision]->
+              entity = entity
+                       |> m.__update_revision__!(context, options)
+                       |> m.__update_version__!(context, options)
+
+              m.__update_tags__!(entity, context, options)
+              m.__update_index__!(entity, context, options)
+              m.make_active!(entity, context, options)
               entity
-              |> m.__update_revision__!(context, options)
-              |> m.__update_version__!(context, options)
+
             active_revision_ref == article_info.revision ->
+              entity = entity
+                       |> m.__update_revision__!(context, options)
+                       |> m.__update_version__!(context, options)
+
+              m.__update_tags__!(entity, context, options)
+              m.__update_index__!(entity, context, options)
+              m.make_active!(entity, context, options)
               entity
-              |> m.__update_revision__!(context, options)
-              |> m.__update_version__!(context, options)
+
             :else ->
               entity
               |> m.__update_revision__!(context, options)
@@ -480,7 +549,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
           identifier = Noizu.ERP.id(article_info.article)
           {:ref, _, {{:ref, _v, {_article, version_path}}, revision_number}} = article_info.revision
-          qualified_identifier = {:revision, {identifier, version_path, revision_number}}
+          qualified_identifier = {:revision, {entity.__struct__,  identifier, version_path, revision_number}}
           entity = put_in(entity, [Access.key(:identifier)], qualified_identifier)
 
           revision_entity.archive(revision, entity, context, options)
@@ -527,7 +596,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
           identifier = Noizu.ERP.id(article_info.article)
           {:ref, _, {{:ref, _v, {_article, version_path}}, revision_number}} = article_info.revision
-          qualified_identifier = {:revision, {identifier, version_path, revision_number}}
+          qualified_identifier = {:revision, {entity.__struct__, identifier, version_path, revision_number}}
           entity = put_in(entity, [Access.key(:identifier)], qualified_identifier)
           entity = cond do
                      options[:active] == false -> entity
@@ -564,7 +633,6 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     version = options[:version] || Noizu.V3.CMS.Version
     revision = options[:revision] || Noizu.V3.CMS.Version.Revision
     article_info = options[:article_info] || Noizu.V3.CMS.Article.Info
-    macro_file = __ENV__.file
     quote do
       @provider Noizu.V3.CMS.Meta.ArticleType.CMS.Default
 

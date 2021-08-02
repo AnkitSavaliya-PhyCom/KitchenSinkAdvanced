@@ -44,6 +44,9 @@ defprotocol Noizu.V3.CMS.Protocol do
   def active_version(ref, context, options)
   def active_version!(ref, context, options)
 
+  def active_revision(ref, version, context, options)
+  def active_revision!(ref, version, context, options)
+
   def active_revision(ref, context, options)
   def active_revision!(ref, context, options)
 
@@ -97,6 +100,9 @@ defimpl Noizu.V3.CMS.Protocol, for: Any do
         def active_version(ref, context, options), do: unquote(module).active_version(ref, context, options)
         def active_version!(ref, context, options), do: unquote(module).active_version!(ref, context, options)
 
+        def active_revision(ref, version, context, options), do: unquote(module).active_revision(ref, version, context, options)
+        def active_revision!(ref, version, context, options), do: unquote(module).active_revision(ref, version, context, options)
+
         def active_revision(ref, context, options), do: unquote(module).active_revision(ref, context, options)
         def active_revision!(ref, context, options), do: unquote(module).active_revision!(ref, context, options)
 
@@ -143,6 +149,9 @@ defimpl Noizu.V3.CMS.Protocol, for: Any do
 
   def active_version(_ref, _context, _options), do: nil
   def active_version!(_ref, _context, _options), do: nil
+
+  def active_revision(_ref, _version, _context, _options), do: nil
+  def active_revision!(_ref, _version, _context, _options), do: nil
 
   def active_revision(_ref, _context, _options), do: nil
   def active_revision!(_ref, _context, _options), do: nil
@@ -191,6 +200,9 @@ defimpl Noizu.V3.CMS.Protocol, for: [BitString] do
 
   def active_version(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_version(ref, context, options)
   def active_version!(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_version!(ref, context, options)
+
+  def active_revision(ref, version, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_revision(ref, version, context, options)
+  def active_revision!(ref, version, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_revision!(ref, version, context, options)
 
   def active_revision(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_revision(ref, context, options)
   def active_revision!(ref, context, options), do: Noizu.ERP.ref(ref) |> Noizu.V3.CMS.Protocol.active_revision!(ref, context, options)
@@ -249,15 +261,18 @@ defimpl Noizu.V3.CMS.Protocol, for: [Tuple] do
   def active_version(ref, context, options), do: apply_action(ref, :active_version, [ref, context, options])
   def active_version!(ref, context, options), do: apply_action(ref, :active_version!, [ref, context, options])
 
+  def active_revision(ref, version, context, options), do: apply_action(ref, :active_revision, [ref, version, context, options])
+  def active_revision!(ref, version, context, options), do: apply_action(ref, :active_revision!, [ref, version, context, options])
+
   def active_revision(ref, context, options), do: apply_action(ref, :active_revision, [ref, context, options])
   def active_revision!(ref, context, options), do: apply_action(ref, :active_revision!, [ref, context, options])
 
-  def versioning_record?({:ref, _m, {:version, {_identifier, _version}}}, _context, _options), do: true
-  def versioning_record?({:ref, _m, {:revision, {_identifier, _version, _revision}}}, _context, _options), do:  true
+  def versioning_record?({:ref, _m, {:version, {_entity, _identifier, _version}}}, _context, _options), do: true
+  def versioning_record?({:ref, _m, {:revision, {_entity, _identifier, _version, _revision}}}, _context, _options), do:  true
   def versioning_record?(ref, context, options), do: apply_action(ref, :versioning_record?, [ref, context, options])
 
-  def versioning_record!({:ref, _m, {:version, {_identifier, _version}}}, _context, _options), do: true
-  def versioning_record!({:ref, _m, {:revision, {_identifier, _version, _revision}}}, _context, _options), do: true
+  def versioning_record!({:ref, _m, {:version, {_entity, _identifier, _version}}}, _context, _options), do: true
+  def versioning_record!({:ref, _m, {:revision, {_entity, _identifier, _version, _revision}}}, _context, _options), do: true
   def versioning_record!(ref, context, options), do: apply_action(ref, :versioning_record!, [ref, context, options])
 
 end

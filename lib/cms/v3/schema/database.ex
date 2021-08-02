@@ -48,14 +48,14 @@ defdatabase Noizu.V3.CMS.Database do
   # @Article.Index.Table
   #-----------------------------------------------------------------------------
   deftable Article.Index.Table,
-           [:article, :status, :module, :type, :editor, :created_on, :modified_on, :active_version, :active_revision],
+           [:article, :status, :manager, :article_type, :editor, :created_on, :modified_on, :active_version, :active_revision],
            type: :set,
-           index: [:status, :module, :type, :editor, :created_on, :modified_on] do
+           index: [:status, :manager, :article_type, :editor, :created_on, :modified_on] do
     @type t :: %__MODULE__{
                  article: Noizu.KitchenSink.Types.entity_reference,
                  status: :approved | :pending | :disabled | atom,
-                 module: module,
-                 type: :post | :file | :image | atom | module,
+                 manager: atom,
+                 article_type: :post | :file | :image | :default | atom | any,
                  editor: Noizu.KitchenSink.Types.entity_reference,
                  created_on: integer,
                  modified_on: integer,

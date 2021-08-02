@@ -13,7 +13,6 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
   end
 
   def post_defstruct(_options) do
-    macro_file = __ENV__.file
     quote do
 
       #-----------------------------------------
@@ -56,7 +55,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __revision_to_id__(revision) do
         case __cms_manager__().__cms__(:revision).id(revision) do
-          {{:ref, _version_entity, {{:ref, _entity, id}, version_path}}, revision_id} -> {:revision, {id, version_path, revision_id}}
+          {{:ref, version_entity, {{:ref, entity, id}, version_path}}, revision_id} -> {:revision, {entity, id, version_path, revision_id}}
           _ -> nil
         end
       end
@@ -71,7 +70,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                                          entity.identifier ->
                                            cond do
                                              Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options) ->
-                                               override_options = put_in(options, [Access.key(:override_identifier)], true)
+                                               override_options = put_in(options, [:override_identifier], true)
                                                {super(entity, context, override_options), true}
                                              :else ->
                                                entity = super(entity, context, options)
@@ -110,7 +109,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                                          entity.identifier ->
                                            cond do
                                              Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options) ->
-                                               override_options = put_in(options, [Access.key(:override_identifier)], true)
+                                               override_options = put_in(options, [:override_identifier], true)
                                                {super(entity, context, override_options), true}
                                              :else ->
                                                entity = super(entity, context, options)
@@ -147,16 +146,16 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       def get(ref, context, options \\ nil) do
         try do
           identifier = cond do
-                         Kernel.match?({:revision, {_id, _version_path, _revision_id}}, ref) ->
+                         Kernel.match?({:revision, {_entity, _id, _version_path, _revision_id}}, ref) ->
                            ref
-                         Kernel.match?({:version, {_id, _version_path}}, ref) ->
-                           {:version, {id, version_path}} = ref
-                           cms_ref = __entity__.ref(id)
+                         Kernel.match?({:version, {_entity, _id, _version_path}}, ref) ->
+                           {:version, {entity_type, id, version_path}} = ref
+                           cms_ref = entity_type.ref(id)
                            version = __cms_manager__().__cms__(:version).__entity__().ref({cms_ref, version_path})
-                           active_revision = Noizu.V3.CMS.Protocol.active_revision(version, context, options)
+                           active_revision = Noizu.V3.CMS.Protocol.active_revision(cms_ref, version, context, options)
                            __revision_to_id__(active_revision)
                          :else ->
-                           cms_ref = __entity__.ref(ref)
+                           cms_ref = __entity__().ref(ref)
                            active_revision = Noizu.V3.CMS.Protocol.active_revision(cms_ref, context, options)
                            __revision_to_id__(active_revision)
                        end
@@ -173,15 +172,15 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       def get!(ref, context, options \\ nil) do
         try do
           identifier = cond do
-                         Kernel.match?({:revision, {_id, _version_path, _revision_id}}, ref) -> ref
-                         Kernel.match?({:version, {_id, _version_path}}, ref) ->
-                           {:version, {id, version_path}} = ref
-                           cms_ref = __entity__.ref(id)
+                         Kernel.match?({:revision, {_entity, _id, _version_path, _revision_id}}, ref) -> ref
+                         Kernel.match?({:version, {_entity, _id, _version_path}}, ref) ->
+                           {:version, {entity_type, id, version_path}} = ref
+                           cms_ref = entity_type.ref(id)
                            version = __cms_manager__().__cms__(:version).__entity__().ref({cms_ref, version_path})
-                           active_revision = Noizu.V3.CMS.Protocol.active_revision!(version, context, options)
+                           active_revision = Noizu.V3.CMS.Protocol.active_revision!(cms_ref, version, context, options)
                            __revision_to_id__(active_revision)
                          :else ->
-                           cms_ref = __entity__.ref(ref)
+                           cms_ref = __entity__().ref(ref)
                            active_revision = Noizu.V3.CMS.Protocol.active_revision!(cms_ref, context, options)
                            __revision_to_id__(active_revision)
                        end
@@ -198,7 +197,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #-----------------------------------------
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_update_callback(entity, context, options) do
-        options_a = put_in(options, [:nested_call], true)
+        #options_a = put_in(options, [:nested_call], true)
+        options_a = options
         if (entity.identifier == nil), do: throw "Identifier not set"
         if (!Noizu.V3.CMS.Protocol.versioning_record?(entity, context, options)), do: throw "#{entity.__struct__} entities may only be persisted using cms revision ids"
         super(entity, context, options)
@@ -208,7 +208,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def pre_update_callback!(entity, context, options) do
-        options_a = put_in(options, [:nested_call], true)
+        #options_a = put_in(options, [:nested_call], true)
+        options_a = options
         if (entity.identifier == nil), do: throw "Identifier not set"
         if (!Noizu.V3.CMS.Protocol.versioning_record!(entity, context, options)), do: throw "#{entity.__struct__} entities may only be persisted using cms revision ids"
         super(entity, context, options)

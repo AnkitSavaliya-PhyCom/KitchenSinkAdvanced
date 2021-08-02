@@ -46,7 +46,7 @@ defmodule Noizu.V3.CMS.Version do
     def update_field(:status = field, source, current, context, options) do
       overwrite_field(field, source, current, context, options)
     end
-    def update_field(:time_stamp = field, source, current, context, options) do
+    def update_field(:time_stamp = field, source, current, _context, options) do
       cond do
         is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
         is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
@@ -95,7 +95,7 @@ defmodule Noizu.V3.CMS.Version do
     def new_version(entity, context, options) do
       article_info =  Noizu.V3.CMS.Protocol.article_info(entity, context, options)
       article = article_info.article
-      current_version = article_info.version
+      #current_version = article_info.version
       version_path = next_version_path(article, article_info.version, context, options)
       version_identifier = {article, version_path}
       %Noizu.V3.CMS.Version.Entity{
@@ -111,7 +111,7 @@ defmodule Noizu.V3.CMS.Version do
     def new_version!(entity, context, options) do
       article_info =  Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
       article = article_info.article
-      current_version = article_info.version
+      #current_version = article_info.version
       version_path = next_version_path!(article, article_info.version, context, options)
       version_identifier = {article, version_path}
       %Noizu.V3.CMS.Version.Entity{
