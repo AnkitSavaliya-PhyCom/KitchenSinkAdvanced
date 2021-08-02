@@ -116,6 +116,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
     def bare_identifier(identifier) do
       case identifier do
+        {:ref, _, ref} -> bare_identifier(ref)
         {:version, {_entity, aid, _version_path}} -> aid
         {:revision, {_entity, aid, _version_path, _rev}} -> aid
         aid when is_integer(aid) or is_atom(aid) -> aid

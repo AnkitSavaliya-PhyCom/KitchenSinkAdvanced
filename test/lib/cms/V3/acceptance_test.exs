@@ -763,100 +763,102 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
   @tag :cms_v3
   @tag :cms_built_in
   test "Article - Expand Revision Ref" do
-    # with_mocks([
-    #      {ArticleTable, [:passthrough], MockArticleTable.strategy()},
-    #      {IndexTable, [:passthrough], MockIndexTable.strategy()},
-    #      {TagTable, [:passthrough], MockTagTable.strategy()},
-    #      {VersionSequencerTable, [:passthrough], MockVersionSequencerTable.strategy()},
-    #      {VersionTable, [:passthrough], MockVersionTable.strategy()},
-    #      {RevisionTable, [:passthrough], MockRevisionTable.strategy()},
-    #      {ActiveRevisionTable, [:passthrough], MockVersionActiveRevisionTable.strategy()},
-    #    ]) do
-    #      Noizu.Support.Cms.V2.Database.MnesiaEmulator.reset()
-    #
-    #      # Setup Article
-    #      post = %Noizu.Cms.V2.Article.PostEntity{
-    #        title: %Noizu.MarkdownField{markdown: "My Post"},
-    #        body: %Noizu.MarkdownField{markdown: "My Post Contents"},
-    #        attributes: %{},
-    #        article_info: %Noizu.Cms.V2.Article.Info{tags: MapSet.new(["test", "apple"])}
-    #      }
-    #      post = Noizu.Cms.V2.ArticleRepo.create!(post, @context)
-    #      {:revision, {aid, version, revision}} = post.identifier
-    #      _article_ref = {:ref, Noizu.Cms.V2.ArticleEntity, aid}
-    #
-    #      sut = Noizu.Cms.V2.Article.PostEntity.entity!({:ref, Noizu.Cms.V2.ArticleEntity, {:revision, {aid, version, revision}}})
-    #      assert sut != nil
-    #      assert sut.identifier == post.identifier
-    #    end
-  end
+    with_mocks([
+      {Article.Table, [:passthrough], MockDB.Article.MockTable.config()},
+      {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.config()},
+      {Article.Tag.Table, [:passthrough], MockDB.Article.Tag.MockTable.config()},
+      {Article.VersionSequencer.Table, [:passthrough], MockDB.Article.VersionSequencer.MockTable.config()},
+      {Article.Version.Table, [:passthrough], MockDB.Article.Version.MockTable.config()},
+      {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
+      {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
+      {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
+    ]) do
+      Noizu.Testing.Mnesia.Emulator.reset()
 
+      # Setup Article
+      post = @cms_post
+      post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
+      post_ref = Noizu.ERP.ref(post)
+      sut = Noizu.V3.CMS.Article.Entity.entity!(post_ref)
+      assert sut.identifier == post.identifier
+    end
+  end
 
   @tag :cms
   @tag :cms_v3
   @tag :cms_built_in
   test "Article - Expand Version Ref" do
-    # with_mocks([
-    #      {ArticleTable, [:passthrough], MockArticleTable.strategy()},
-    #      {IndexTable, [:passthrough], MockIndexTable.strategy()},
-    #      {TagTable, [:passthrough], MockTagTable.strategy()},
-    #      {VersionSequencerTable, [:passthrough], MockVersionSequencerTable.strategy()},
-    #      {VersionTable, [:passthrough], MockVersionTable.strategy()},
-    #      {RevisionTable, [:passthrough], MockRevisionTable.strategy()},
-    #      {ActiveRevisionTable, [:passthrough], MockVersionActiveRevisionTable.strategy()},
-    #    ]) do
-    #      Noizu.Support.Cms.V2.Database.MnesiaEmulator.reset()
-    #
-    #      # Setup Article
-    #      post = %Noizu.Cms.V2.Article.PostEntity{
-    #        title: %Noizu.MarkdownField{markdown: "My Post"},
-    #        body: %Noizu.MarkdownField{markdown: "My Post Contents"},
-    #        attributes: %{},
-    #        article_info: %Noizu.Cms.V2.Article.Info{tags: MapSet.new(["test", "apple"])}
-    #      }
-    #      post = Noizu.Cms.V2.ArticleRepo.create!(post, @context)
-    #      {:revision, {aid, version, _revision}} = post.identifier
-    #      _article_ref = {:ref, Noizu.Cms.V2.ArticleEntity, aid}
-    #
-    #      sut = Noizu.Cms.V2.Article.PostEntity.entity!({:ref, Noizu.Cms.V2.ArticleEntity, {:version, {aid, version}}})
-    #      assert sut != nil
-    #      assert sut.identifier == post.identifier
-    #    end
+    with_mocks([
+      {Article.Table, [:passthrough], MockDB.Article.MockTable.config()},
+      {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.config()},
+      {Article.Tag.Table, [:passthrough], MockDB.Article.Tag.MockTable.config()},
+      {Article.VersionSequencer.Table, [:passthrough], MockDB.Article.VersionSequencer.MockTable.config()},
+      {Article.Version.Table, [:passthrough], MockDB.Article.Version.MockTable.config()},
+      {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
+      {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
+      {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
+    ]) do
+      Noizu.Testing.Mnesia.Emulator.reset()
+
+      # Setup Article
+      post = @cms_post
+      post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
+      {:revision, {type, aid, version, _revision}} = post.identifier
+      version_ref = {:ref, Noizu.V3.CMS.Article.Post.Entity, {:version, {type, aid, version}}}
+      sut = Noizu.V3.CMS.Article.Entity.entity!(version_ref)
+      assert sut.identifier == post.identifier
+    end
   end
 
   @tag :cms
   @tag :cms_v3
   @tag :cms_built_in
   test "Article - Expand Bare Ref" do
-    # with_mocks([
-    #      {ArticleTable, [:passthrough], MockArticleTable.strategy()},
-    #      {IndexTable, [:passthrough], MockIndexTable.strategy()},
-    #      {TagTable, [:passthrough], MockTagTable.strategy()},
-    #      {VersionSequencerTable, [:passthrough], MockVersionSequencerTable.strategy()},
-    #      {VersionTable, [:passthrough], MockVersionTable.strategy()},
-    #      {RevisionTable, [:passthrough], MockRevisionTable.strategy()},
-    #      {ActiveRevisionTable, [:passthrough], MockVersionActiveRevisionTable.strategy()},
-    #    ]) do
-    #      Noizu.Support.Cms.V2.Database.MnesiaEmulator.reset()
-    #
-    #      # Setup Article
-    #      post = %Noizu.Cms.V2.Article.PostEntity{
-    #        title: %Noizu.MarkdownField{markdown: "My Post"},
-    #        body: %Noizu.MarkdownField{markdown: "My Post Contents"},
-    #        attributes: %{},
-    #        article_info: %Noizu.Cms.V2.Article.Info{tags: MapSet.new(["test", "apple"])}
-    #      }
-    #      post = Noizu.Cms.V2.ArticleRepo.create!(post, @context)
-    #      {:revision, {aid, _version, _revision}} = post.identifier
-    #      article_ref = {:ref, Noizu.Cms.V2.ArticleEntity, aid}
-    #
-    #      sut = Noizu.Cms.V2.Article.PostEntity.entity!(article_ref)
-    #      assert sut != nil
-    #      assert sut.identifier == post.identifier
-    #
-    #
-    #    end
+    with_mocks([
+      {Article.Table, [:passthrough], MockDB.Article.MockTable.config()},
+      {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.config()},
+      {Article.Tag.Table, [:passthrough], MockDB.Article.Tag.MockTable.config()},
+      {Article.VersionSequencer.Table, [:passthrough], MockDB.Article.VersionSequencer.MockTable.config()},
+      {Article.Version.Table, [:passthrough], MockDB.Article.Version.MockTable.config()},
+      {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
+      {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
+      {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
+    ]) do
+      Noizu.Testing.Mnesia.Emulator.reset()
+
+      # Setup Article
+      post = @cms_post
+      post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
+      sut = Noizu.V3.CMS.Article.Entity.entity!(post.article_info.article)
+      assert sut.identifier == post.identifier
+    end
   end
+
+
+  @tag :cms
+  @tag :cms_v3_wip
+  @tag :cms_built_in
+  test "Article - Sref" do
+    with_mocks([
+      {Article.Table, [:passthrough], MockDB.Article.MockTable.config()},
+      {Article.Index.Table, [:passthrough], MockDB.Article.Index.MockTable.config()},
+      {Article.Tag.Table, [:passthrough], MockDB.Article.Tag.MockTable.config()},
+      {Article.VersionSequencer.Table, [:passthrough], MockDB.Article.VersionSequencer.MockTable.config()},
+      {Article.Version.Table, [:passthrough], MockDB.Article.Version.MockTable.config()},
+      {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
+      {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
+      {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
+    ]) do
+      Noizu.Testing.Mnesia.Emulator.reset()
+
+      # Setup Article
+      post = @cms_post
+      post = Noizu.V3.CMS.Article.Repo.create!(post, @context)
+      #sref = Noizu.V3.CMS.Article.Entity.sref(post)
+      #IO.inspect sref
+    end
+  end
+
 
   @tag :cms
   @tag :cms_v3
