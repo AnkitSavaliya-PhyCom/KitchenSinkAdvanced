@@ -229,6 +229,30 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     def versioning_record!(_m,  %{identifier: {:version, {_entity, _identifier, _version}}}, _context, _options), do: true
     def versioning_record!(_m, _ref, _context, _options), do: false
 
+
+    def version(_m, ref, context, options) do
+      if article_info = Noizu.V3.CMS.Protocol.article_info(ref, context, options) do
+        article_info.version
+      end
+    end
+    def version!(_m, ref, context, options) do
+      if article_info = Noizu.V3.CMS.Protocol.article_info!(ref, context, options) do
+        article_info.version
+      end
+    end
+
+    def revision(_m, ref, context, options) do
+      if article_info = Noizu.V3.CMS.Protocol.article_info(ref, context, options) do
+        article_info.revision
+      end
+    end
+    def revision!(_m, ref, context, options) do
+      if article_info = Noizu.V3.CMS.Protocol.article_info!(ref, context, options) do
+        article_info.revision
+      end
+    end
+
+
   end
 
   defmacro __using__(_options \\ nil) do
@@ -303,6 +327,14 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def active_revision(ref, version, context, options), do: Provider.active_revision(__MODULE__, ref, version, context, options)
       def active_revision!(ref, version, context, options), do: Provider.active_revision!(__MODULE__, ref, version, context, options)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def version(ref, context, options), do: Provider.version(__MODULE__, ref, context, options)
+      def version!(ref, context, options), do: Provider.version!(__MODULE__, ref, context, options)
+
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def revision(ref, context, options), do: Provider.revision(__MODULE__, ref, context, options)
+      def revision!(ref, context, options), do: Provider.revision!(__MODULE__, ref, context, options)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       defoverridable [

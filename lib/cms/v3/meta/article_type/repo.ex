@@ -221,7 +221,23 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #
       #-----------------------------------------
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
-      def pre_delete_callback(entity, context, options) do
+      def pre_delete_callback({ref, entity_type, _} = ref, context, options) do
+        if entity = entity_type.__repo__().get(ref, context, options) do
+          pre_delete_callback(entity, context, options)
+        else
+          throw :not_found
+        end
+      end
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def pre_delete_callback({:revision, {entity_type, _aid, _version, _revision}} = ref, context, options) do
+        if entity = entity_type.__repo__().get(ref, context, options) do
+          pre_delete_callback(entity, context, options)
+        else
+          throw :not_found
+        end
+      end
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def pre_delete_callback(entity, context, options) when is_struct(entity) do
         if entity.identifier == nil, do: throw(:identifier_not_set)
 
         # Active Revision Check
@@ -229,7 +245,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                    options[:bookkeeping] == :disabled -> entity
                    :else ->
                      article_revision = Noizu.V3.CMS.Protocol.revision(entity, context, options)
-                                       |> Noizu.ERP.ref()
+                                        |> Noizu.ERP.ref()
                      active_revision = Noizu.V3.CMS.Protocol.active_revision(entity, context, options)
                                        |> Noizu.ERP.ref()
                      cond do
@@ -244,8 +260,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                            {:ref, _, {article_version, _revision}} ->
                              cond do
                                article_version == active_version -> entity
-                               article_revision == Noizu.ERP.ref(Noizu.V3.CMS.Protocol.active_revision(article_version, context, options)) ->
-                                 throw :active_revision
+                               article_revision == Noizu.ERP.ref(Noizu.V3.CMS.Protocol.active_revision(entity, article_version, context, options)) ->
+                                 throw :version_active_revision
                                :else -> entity
                              end
                            _ -> entity
@@ -254,33 +270,54 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                  end
         super(entity, context, options)
       end
+      def pre_delete_callback(_entity, _context, _options), do: throw :invalid_ref
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
-      def pre_delete_callback!(entity, context, options) do
+      def pre_delete_callback!({ref, entity_type, _} = ref, context, options) do
+        if entity = entity_type.__repo__().get!(ref, context, options) do
+          pre_delete_callback!(entity, context, options)
+        else
+          throw :not_found
+        end
+      end
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def pre_delete_callback!({:revision, {entity_type, _aid, _version, _revision}} = ref, context, options) do
+        if entity = entity_type.__repo__().get!(ref, context, options) do
+          pre_delete_callback!(entity, context, options)
+        else
+          throw :not_found
+        end
+      end
+      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      def pre_delete_callback!(entity, context, options) when is_struct(entity) do
         if entity.identifier == nil, do: throw(:identifier_not_set)
-
         # Active Revision Check
         entity = cond do
-                   options[:bookkeeping] == :disabled -> entity
+                   options[:bookkeeping] == :disabled ->
+                     entity
                    :else ->
                      article_revision = Noizu.V3.CMS.Protocol.revision!(entity, context, options)
                                         |> Noizu.ERP.ref()
                      active_revision = Noizu.V3.CMS.Protocol.active_revision!(entity, context, options)
                                        |> Noizu.ERP.ref()
                      cond do
-                       !article_revision -> throw :article_revisdion_not_found
-                       article_revision == active_revision -> throw :active_revision
+                       !article_revision ->
+                         throw :article_revision_not_found
+                       article_revision == active_revision ->
+                         throw :active_revision
                        :else ->
                          active_version = case active_revision do
                                             {:ref, _, {article_version, _revision}} -> article_version
                                             _ -> nil
                                           end
+
                          case article_revision do
                            {:ref, _, {article_version, _revision}} ->
                              cond do
-                               article_version == active_version -> entity
-                               article_revision == Noizu.ERP.ref(Noizu.V3.CMS.Protocol.active_revision!(article_version, context, options)) ->
-                                 throw :active_revision
+                               article_version == active_version ->
+                                 entity
+                               article_revision == Noizu.ERP.ref(Noizu.V3.CMS.Protocol.active_revision!(entity, article_version, context, options)) ->
+                                 throw :version_active_revision
                                :else -> entity
                              end
                            _ -> entity
@@ -289,6 +326,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
                  end
         super(entity, context, options)
       end
+      def pre_delete_callback!(_entity, _context, _options), do: throw :invalid_ref
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
 
