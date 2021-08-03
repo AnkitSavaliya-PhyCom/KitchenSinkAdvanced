@@ -204,7 +204,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       end
     end
 
-    def active_revision(_m, ref, version, _context, _options) do
+    def active_revision(_m, ref, version, context, options) do
       version = Noizu.ERP.ref(version)
       active_revision_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_revision, context, options)
       cond do
@@ -213,7 +213,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       end
     end
 
-    def active_revision!(_m, ref, version, _context, _options) do
+    def active_revision!(_m, ref, version, context, options) do
       version = Noizu.ERP.ref(version)
       active_revision_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_revision, context, options)
       cond do
