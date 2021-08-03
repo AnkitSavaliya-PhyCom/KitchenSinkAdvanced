@@ -1,29 +1,41 @@
 defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
+
+
+
+
   defmodule Default do
     def __update_tags__(_m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
-      Noizu.V3.CMS.Database.Article.Tag.Table.delete(article_info.article)
+
+      tag_table = Noizu.V3.CMS.Protocol.__cms__(entity, :tag, context, options)
+      tag_table.delete(article_info.article)
+
       if (article_info.tags) do
           Enum.map(MapSet.to_list(article_info.tags), fn(tag) ->
-            %Noizu.V3.CMS.Database.Article.Tag.Table{article: article_info.article, tag: tag} |> Noizu.V3.CMS.Database.Article.Tag.Table.write()
+            struct(tag_table, [article: article_info.article, tag: tag])
+            |> tag_table.write()
           end)
       end
     end
 
     def __update_tags__!(_m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
-      Noizu.V3.CMS.Database.Article.Tag.Table.delete!(article_info.article)
+
+      tag_table = Noizu.V3.CMS.Protocol.__cms__!(entity, :tag, context, options)
+      tag_table.delete!(article_info.article)
       if (article_info.tags) do
         Enum.map(MapSet.to_list(article_info.tags), fn(tag) ->
-          %Noizu.V3.CMS.Database.Article.Tag.Table{article: article_info.article, tag: tag} |> Noizu.V3.CMS.Database.Article.Tag.Table.write!()
+          struct(tag_table, [article: article_info.article, tag: tag])
+          |> tag_table.write!()
         end)
       end
     end
 
     def __update_index__(_m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
-      %Noizu.V3.CMS.Database.Article.Index.Table{
+      index_table = Noizu.V3.CMS.Protocol.__cms__(entity, :index, context, options)
+      struct(index_table, [
         article: article_info.article,
         status: article_info.status,
         manager: article_info.manager,
@@ -32,15 +44,15 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         created_on: article_info.time_stamp.created_on && DateTime.to_unix(article_info.time_stamp.created_on),
         modified_on: article_info.time_stamp.modified_on && DateTime.to_unix(article_info.time_stamp.modified_on),
         active_version: article_info.version,
-        active_revision: article_info.revision,
-      } |> Noizu.V3.CMS.Database.Article.Index.Table.write()
+        active_revision: article_info.revision]) |> index_table.write()
     end
 
 
 
     def __update_index__!(_m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
-      %Noizu.V3.CMS.Database.Article.Index.Table{
+      index_table = Noizu.V3.CMS.Protocol.__cms__!(entity, :index, context, options)
+      struct(index_table, [
         article: article_info.article,
         status: article_info.status,
         manager: article_info.manager,
@@ -49,15 +61,13 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         created_on: article_info.time_stamp.created_on && DateTime.to_unix(article_info.time_stamp.created_on),
         modified_on: article_info.time_stamp.modified_on && DateTime.to_unix(article_info.time_stamp.modified_on),
         active_version: article_info.version,
-        active_revision: article_info.revision,
-      } |> Noizu.V3.CMS.Database.Article.Index.Table.write!()
+        active_revision: article_info.revision]) |> index_table.write!()
     end
 
 
     def make_active(m, entity, for_version, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
       for_version_ref = Noizu.ERP.ref(for_version)
-
       cond do
         !article_info -> throw "article_info not set"
         !article_info.version -> throw "version not set"
@@ -65,15 +75,17 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         for_version_ref != article_info.version -> throw "attempting to make a revision active on the wrong version"
         :else ->
           # check if version is active as we will then need to update indexing as well.
-          article_active_version = Noizu.V3.CMS.Database.Article.Active.Version.Table.read(article_info.article)
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__(entity, :active_version, context, options)
+          active_revision_table = Noizu.V3.CMS.Protocol.__cms__(entity, :active_revision, context, options)
+          article_active_version = active_version_table.read(article_info.article)
           cond do
             article_active_version == nil -> m.make_active(entity, context, options)
             article_active_version == article_info.version -> m.make_active(entity, context, options)
             :else ->
-              %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
-                version: article_info.version,
-                revision: article_info.revision
-              } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write
+            struct(active_revision_table, [
+              version: article_info.version,
+              revision: article_info.revision
+            ]) |> active_revision_table.write()
           end
       end
       entity
@@ -89,15 +101,17 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         for_version_ref != article_info.version -> throw "attempting to make a revision active on the wrong version"
         :else ->
           # check if version is active as we will then need to update indexing as well.
-          article_active_version = Noizu.V3.CMS.Database.Article.Active.Version.Table.read!(article_info.article)
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__!(entity, :active_version, context, options)
+          active_revision_table = Noizu.V3.CMS.Protocol.__cms__!(entity, :active_revision, context, options)
+          article_active_version = active_version_table.read!(article_info.article)
           cond do
             article_active_version == nil -> m.make_active!(entity, context, options)
             article_active_version == article_info.version -> m.make_active!(entity, context, options)
             :else ->
-              %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
+              struct(active_revision_table, [
                 version: article_info.version,
                 revision: article_info.revision
-              } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write!
+              ]) |> active_revision_table.write!()
           end
       end
       entity
@@ -118,17 +132,16 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
           m.__update_tags__(entity, context, options)
           m.__update_index__(entity, context, options)
 
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__(entity, :active_version, context, options)
+          active_revision_table = Noizu.V3.CMS.Protocol.__cms__(entity, :active_revision, context, options)
+
           #...................................
           # Needs to be handled externally as providers with multiple persistence layers will want to track this info as well.
-          %Noizu.V3.CMS.Database.Article.Active.Version.Table{
-            article: article_info.article,
-            version: article_info.version
-          } |> Noizu.V3.CMS.Database.Article.Active.Version.Table.write
+          struct(active_version_table, [article: article_info.article, version: article_info.version])
+          |> active_version_table.write()
 
-          %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
-            version: article_info.version,
-            revision: article_info.revision
-          } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write
+          struct(active_revision_table, [version: article_info.version, revision: article_info.revision])
+          |> active_revision_table.write()
       end
       entity
     end
@@ -148,17 +161,16 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
           m.__update_tags__!(entity, context, options)
           m.__update_index__!(entity, context, options)
 
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__!(entity, :active_version, context, options)
+          active_revision_table = Noizu.V3.CMS.Protocol.__cms__!(entity, :active_revision, context, options)
+
           #...................................
           # Needs to be handled externally as providers with multiple persistence layers will want to track this info as well.
-          %Noizu.V3.CMS.Database.Article.Active.Version.Table{
-            article: article_info.article,
-            version: article_info.version
-          } |> Noizu.V3.CMS.Database.Article.Active.Version.Table.write!
+          struct(active_version_table, [article: article_info.article, version: article_info.version])
+          |> active_version_table.write!()
 
-          %Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table{
-            version: article_info.version,
-            revision: article_info.revision
-          } |> Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.write!
+          struct(active_revision_table, [version: article_info.version, revision: article_info.revision])
+          |> active_revision_table.write!()
       end
       entity
     end
@@ -166,31 +178,35 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
     def active_version(_m, ref, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(ref, context, options)
+      active_version_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_version, context, options)
       cond do
         !article_info -> throw "article_info not found"
         !article_info.article -> throw "article_info.article not found"
-        av = Noizu.V3.CMS.Database.Article.Active.Version.Table.read(article_info.article) -> av.version
+        av = active_version_table.read(article_info.article) -> av.version
         :else -> nil
       end
     end
     def active_version!(_m, ref, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info!(ref, context, options)
+      active_version_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_version, context, options)
       cond do
         !article_info -> throw "article_info not found"
         !article_info.article -> throw "article_info.article not found"
-        av = Noizu.V3.CMS.Database.Article.Active.Version.Table.read!(article_info.article) -> av.version
+        av = active_version_table.read!(article_info.article) -> av.version
         :else -> nil
       end
     end
 
     def active_revision(_m, ref, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(ref, context, options)
+      active_version_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_version, context, options)
+      active_revision_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_revision, context, options)
       cond do
         !article_info -> throw "article_info not found"
         !article_info.article -> throw "article_info.article not found"
-        av = Noizu.V3.CMS.Database.Article.Active.Version.Table.read(article_info.article) ->
+        av = active_version_table.read(article_info.article) ->
           cond do
-            ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read(av.version) -> ar.revision
+            ar = active_revision_table.read(av.version) -> ar.revision
             :else -> nil
           end
         :else -> nil
@@ -198,12 +214,14 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     end
     def active_revision!(_m, ref, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info!(ref, context, options)
+      active_version_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_version, context, options)
+      active_revision_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_revision, context, options)
       cond do
         !article_info -> throw "article_info not found"
         !article_info.article -> throw "article_info.article not found"
-        av = Noizu.V3.CMS.Database.Article.Active.Version.Table.read!(article_info.article) ->
+        av = active_version_table.read!(article_info.article) ->
           cond do
-            ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read!(av.version) -> ar.revision
+            ar = active_revision_table.read!(av.version) -> ar.revision
             :else -> nil
           end
         :else -> nil
@@ -634,6 +652,11 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
     version = options[:version] || Noizu.V3.CMS.Version
     revision = options[:revision] || Noizu.V3.CMS.Version.Revision
     article_info = options[:article_info] || Noizu.V3.CMS.Article.Info
+    tag_table = options[:tag_table] || Noizu.V3.CMS.Database.Article.Tag.Table
+    index_table = options[:index_table] || Noizu.V3.CMS.Database.Article.Index.Table
+    active_version_table = options[:active_version_table] || Noizu.V3.CMS.Database.Article.Active.Version.Table
+    active_revision_table = options[:active_revision_table] || Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table
+
     quote do
       @provider Noizu.V3.CMS.Meta.ArticleType.CMS.Default
 
@@ -649,11 +672,22 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       def __cms__(:version), do: unquote(version)
       def __cms__(:revision), do: unquote(revision)
       def __cms__(:article_info), do: unquote(article_info)
+      def __cms__(:tag), do: unquote(tag_table)
+      def __cms__(:index), do: unquote(index_table)
+      def __cms__(:active_version), do: unquote(active_version_table)
+      def __cms__(:active_revision), do: unquote(active_revision_table)
+
+
+
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms__!(:version), do: unquote(version)
       def __cms__!(:revision), do: unquote(revision)
       def __cms__!(:article_info), do: unquote(article_info)
+      def __cms__!(:tag), do: unquote(tag_table)
+      def __cms__!(:index), do: unquote(index_table)
+      def __cms__!(:active_version), do: unquote(active_version_table)
+      def __cms__!(:active_revision), do: unquote(active_revision_table)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def __cms_info__(entity, context, options), do: nil

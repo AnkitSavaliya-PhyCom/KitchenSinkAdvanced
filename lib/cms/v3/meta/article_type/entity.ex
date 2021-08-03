@@ -132,12 +132,13 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     def active_version(m, %{article_info: article_info} = ref, context, options) do
       m.__cms_manager__().active_version(ref, context, options)
     end
-    def active_version(m, {:ref, m, identifier}, context, options) do
+    def active_version(m, {:ref, m, identifier} = ref, context, options) do
       aid = bare_identifier(identifier)
       cond do
         aid == nil -> nil
         :else ->
-          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_version, context, options)
+          case active_version_table.match([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
             [av|_] -> av.version
             _ -> nil
           end
@@ -148,32 +149,33 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     def active_version!(m, %{article_info: article_info} = ref, context, options) do
       m.__cms_manager__().active_version!(ref, context, options)
     end
-    def active_version!(m, {:ref, m, identifier}, context, options) do
+    def active_version!(m, {:ref, m, identifier} = ref, context, options) do
       aid = bare_identifier(identifier)
       cond do
         aid == nil -> nil
         :else ->
-          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match!([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_version, context, options)
+          case active_version_table.match!([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
             [av|_] -> av.version
             _ -> nil
           end
       end
     end
 
-
-
     def active_revision(m, %{article_info: article_info} = ref, context, options) do
       m.__cms_manager__().active_revision(ref, context, options)
     end
-    def active_revision(m, {:ref, m, identifier}, context, options) do
+    def active_revision(m, {:ref, m, identifier} = ref, context, options) do
       aid = bare_identifier(identifier)
       cond do
         aid == nil -> nil
         :else ->
-          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_version, context, options)
+          active_revision_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_revision, context, options)
+          case active_version_table.match([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
             [av|_] ->
               cond do
-                ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read(av.version) -> ar.revision
+                ar = active_revision_table.read(av.version) -> ar.revision
                 :else -> nil
               end
               _ -> nil
@@ -184,15 +186,17 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     def active_revision!(m, %{article_info: article_info} = ref, context, options) do
       m.__cms_manager__().active_revision!(ref, context, options)
     end
-    def active_revision!(m, {:ref, m, identifier}, context, options) do
+    def active_revision!(m, {:ref, m, identifier} = ref, context, options) do
       aid = bare_identifier(identifier)
       cond do
         aid == nil -> nil
         :else ->
-          case Noizu.V3.CMS.Database.Article.Active.Version.Table.match!([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
+          active_version_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_version, context, options)
+          active_revision_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_revision, context, options)
+          case active_version_table.match!([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
             v = [av|_] ->
               cond do
-                ar = Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read!(av.version) -> ar.revision
+                ar = active_revision_table.read!(av.version) -> ar.revision
                 :else -> nil
               end
             v -> nil
@@ -200,18 +204,20 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       end
     end
 
-    def active_revision(_m, _ref, version, _context, _options) do
+    def active_revision(_m, ref, version, _context, _options) do
       version = Noizu.ERP.ref(version)
+      active_revision_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_revision, context, options)
       cond do
-        ar = version && Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read(version) -> ar.revision
+        ar = version && active_revision_table.read(version) -> ar.revision
         :else -> nil
       end
     end
 
-    def active_revision!(_m, _ref, version, _context, _options) do
+    def active_revision!(_m, ref, version, _context, _options) do
       version = Noizu.ERP.ref(version)
+      active_revision_table = Noizu.V3.CMS.Protocol.__cms__(ref, :active_revision, context, options)
       cond do
-        ar = version && Noizu.V3.CMS.Database.Article.Active.Version.Revision.Table.read!(version) -> ar.revision
+        ar = version && active_revision_table.read!(version) -> ar.revision
         :else -> nil
       end
     end
