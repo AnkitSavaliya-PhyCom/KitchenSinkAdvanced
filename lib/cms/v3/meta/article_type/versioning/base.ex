@@ -8,7 +8,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Versioning.Base do
 
   defmacro __before_compile__(_) do
     quote do
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
 
       def __cms__(), do: nil
       def __cms__!(), do: nil

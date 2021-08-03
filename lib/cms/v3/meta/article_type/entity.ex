@@ -603,6 +603,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
         article_string_to_id: 1,
         ref: 1,
       ]
+
+      @file "#{__ENV__.file}:#{__ENV__.line}"
     end
   end
 

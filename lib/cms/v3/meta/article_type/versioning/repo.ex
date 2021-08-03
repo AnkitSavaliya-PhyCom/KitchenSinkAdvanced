@@ -12,7 +12,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Versioning.Repo do
 
   def post_defstruct(_options) do
     quote do
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
 
       #-----------------------------------------
       #

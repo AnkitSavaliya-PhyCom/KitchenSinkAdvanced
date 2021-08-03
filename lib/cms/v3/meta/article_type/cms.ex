@@ -803,6 +803,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
         new_revision!: 3,
       ]
     end
+    @file "#{__ENV__.file}:#{__ENV__.line}"
   end
 
   defmacro __before_compile__(_) do

@@ -355,6 +355,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
         pre_delete_callback: 3,
         pre_delete_callback!: 3,
       ]
+
+      @file "#{__ENV__.file}:#{__ENV__.line}"
     end
   end
 
