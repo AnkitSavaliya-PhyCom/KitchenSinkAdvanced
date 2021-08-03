@@ -223,11 +223,11 @@ defimpl Noizu.V3.CMS.Protocol, for: [Tuple] do
   end
   def apply_action(_ref, _action, _arguments), do: nil
 
-  def __cms__(ref, context, options), do: apply_action(ref, :__cms__, [])
-  def __cms__!(ref, context, options), do: apply_action(ref, :__cms__!, [])
+  def __cms__(ref, _context, _options), do: apply_action(ref, :__cms__, [])
+  def __cms__!(ref, _context, _options), do: apply_action(ref, :__cms__!, [])
 
-  def __cms__(ref, property, context, options), do: apply_action(ref, :__cms__, [property])
-  def __cms__!(ref, property, context, options), do: apply_action(ref, :__cms__!, [property])
+  def __cms__(ref, property, _context, _options), do: apply_action(ref, :__cms__, [property])
+  def __cms__!(ref, property, _context, _options), do: apply_action(ref, :__cms__!, [property])
 
   def __cms_info__(ref, context, options), do: apply_action(ref, :__cms_info__, [ref, context, options])
   def __cms_info__!(ref, context, options), do: apply_action(ref, :__cms_info__!, [ref, context, options])

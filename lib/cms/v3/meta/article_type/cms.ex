@@ -228,17 +228,14 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       end
     end
 
-    def revisions(_m, _ref,_context, _options), do: nil
-    def revisions!(_m, _ref,_context, _options), do: nil
+    def revisions(_m, _ref, _context, _options), do: nil
+    def revisions!(_m, _ref, _context, _options), do: nil
 
-    def versions(_m, _ref,_context, _options), do: nil
-    def versions!(_m, _ref,_context, _options), do: nil
+    def versions(_m, _ref, _context, _options), do: nil
+    def versions!(_m, _ref, _context, _options), do: nil
 
-    def versions(_m, _ref,_context, _options), do: nil
-    def versions!(_m, _ref,_context, _options), do: nil
-
-    def tags(_m, _ref,_context, _options), do: nil
-    def tags!(_m, _ref,_context, _options), do: nil
+    def tags(_m, _ref, _context, _options), do: nil
+    def tags!(_m, _ref, _context, _options), do: nil
 
     def set_tags(_m, _ref, _tags, _context, _options), do: nil
     def set_tags!(_m, _ref, _tags, _context, _options), do: nil
@@ -246,7 +243,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
 
 
 
-    def __update_version__(m, entity, context, options) do
+    def __update_version__(_m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info(entity, context, options)
       version = article_info.version |> Noizu.ERP.entity
       #...
@@ -268,7 +265,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       Noizu.V3.CMS.Protocol.__set_article_info__(entity, article_info, context, options)
     end
 
-    def __update_version__!(m, entity, context, options) do
+    def __update_version__!(_m, entity, context, options) do
       article_info = Noizu.V3.CMS.Protocol.article_info!(entity, context, options)
       version = article_info.version |> Noizu.ERP.entity
       #...

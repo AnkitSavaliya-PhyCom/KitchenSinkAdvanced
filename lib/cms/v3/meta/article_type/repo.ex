@@ -221,7 +221,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       #
       #-----------------------------------------
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
-      def pre_delete_callback({ref, entity_type, _} = ref, context, options) do
+      def pre_delete_callback({:ref, entity_type, _} = ref, context, options) do
         if entity = entity_type.__repo__().get(ref, context, options) do
           pre_delete_callback(entity, context, options)
         else
@@ -273,7 +273,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Repo do
       def pre_delete_callback(_entity, _context, _options), do: throw :invalid_ref
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
-      def pre_delete_callback!({ref, entity_type, _} = ref, context, options) do
+      def pre_delete_callback!({:ref, entity_type, _} = ref, context, options) do
         if entity = entity_type.__repo__().get!(ref, context, options) do
           pre_delete_callback!(entity, context, options)
         else

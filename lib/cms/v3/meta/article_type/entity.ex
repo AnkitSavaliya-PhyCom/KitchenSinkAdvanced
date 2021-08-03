@@ -5,11 +5,11 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     @version_format ~r/^(.*)-(.*)@([0-9a-zA-Z][0-9a-zA-Z\.]*)$/
     @article_format ~r/^(.*)-(.*)$/
 
-    def __cms_info__(m, ref, _context, _options), do: []
-    def __cms_info__!(m, ref, _context, _options), do: []
+    def __cms_info__(_m, _ref, _context, _options), do: []
+    def __cms_info__!(_m, _ref, _context, _options), do: []
 
-    def __cms_info__(m, ref, property, _context, _options), do: nil
-    def __cms_info__!(m, ref, property, _context, _options), do: nil
+    def __cms_info__(_m, _ref, _property, _context, _options), do: nil
+    def __cms_info__!(_m, _ref, _property, _context, _options), do: nil
 
     def __set_article_info__(_m, ref, update, _context, _options) do
       put_in(ref,[Access.key(:article_info)], update)
@@ -129,7 +129,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     end
 
 
-    def active_version(m, %{article_info: article_info} = ref, context, options) do
+    def active_version(m, %{article_info: _article_info} = ref, context, options) do
       m.__cms_manager__().active_version(ref, context, options)
     end
     def active_version(m, {:ref, m, identifier} = ref, context, options) do
@@ -146,7 +146,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     end
 
 
-    def active_version!(m, %{article_info: article_info} = ref, context, options) do
+    def active_version!(m, %{article_info: _article_info} = ref, context, options) do
       m.__cms_manager__().active_version!(ref, context, options)
     end
     def active_version!(m, {:ref, m, identifier} = ref, context, options) do
@@ -162,7 +162,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       end
     end
 
-    def active_revision(m, %{article_info: article_info} = ref, context, options) do
+    def active_revision(m, %{article_info: _article_info} = ref, context, options) do
       m.__cms_manager__().active_revision(ref, context, options)
     end
     def active_revision(m, {:ref, m, identifier} = ref, context, options) do
@@ -183,7 +183,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       end
     end
 
-    def active_revision!(m, %{article_info: article_info} = ref, context, options) do
+    def active_revision!(m, %{article_info: _article_info} = ref, context, options) do
       m.__cms_manager__().active_revision!(ref, context, options)
     end
     def active_revision!(m, {:ref, m, identifier} = ref, context, options) do
@@ -194,12 +194,12 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
           active_version_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_version, context, options)
           active_revision_table = Noizu.V3.CMS.Protocol.__cms__!(ref, :active_revision, context, options)
           case active_version_table.match!([article: {:ref, :_, aid}]) |> Amnesia.Selection.values() do
-            v = [av|_] ->
+            [av|_] ->
               cond do
                 ar = active_revision_table.read!(av.version) -> ar.revision
                 :else -> nil
               end
-            v -> nil
+            _ -> nil
           end
       end
     end

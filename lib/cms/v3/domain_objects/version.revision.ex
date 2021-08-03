@@ -56,7 +56,7 @@ defmodule Noizu.V3.CMS.Version.Revision do
     def update_field(:status = field, source, current, context, options) do
       overwrite_field(field, source, current, context, options)
     end
-    def update_field(:time_stamp = field, source, current, context, options) do
+    def update_field(:time_stamp = field, source, current, _context, options) do
       cond do
         is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
         is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
