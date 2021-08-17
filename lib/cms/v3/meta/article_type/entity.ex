@@ -456,89 +456,89 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     options = Macro.expand(options, __ENV__)
     article_type = options[:article_type] || :default
     quote do
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       alias Noizu.V3.CMS.Meta.ArticleType.Entity.Default, as: Provider
       def __cms_manager__(), do:  @__nzdo__poly_base.__cms_manager__()
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__(), do: put_in(@__nzdo__poly_base.__cms__(), [:article_type], unquote(article_type))
       def __cms__!(), do: put_in(@__nzdo__poly_base.__cms__!(), [:article_type], unquote(article_type))
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__(:article_type), do: unquote(article_type)
       def __cms__(property), do: @__nzdo__poly_base.__cms__(property)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__!(:article_type), do: unquote(article_type)
       def __cms__!(property), do: @__nzdo__poly_base.__cms__!(property)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms_info__(ref, context, options), do: Provider.__cms_info__(__MODULE__, ref, context, options)
       def __cms_info__!(ref, context, options), do: Provider.__cms_info__!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms_info__(ref, property, context, options), do: Provider.__cms_info__(__MODULE__, ref, property, context, options)
       def __cms_info__!(ref, property, context, options), do: Provider.__cms_info__!(__MODULE__, ref, property, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __set_article_info__(ref, update, context, options), do: Provider.__set_article_info__(__MODULE__, ref, update, context, options)
       def __set_article_info__!(ref, update, context, options), do: Provider.__set_article_info__!(__MODULE__, ref, update, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __update_article_info__(ref, context, options), do: Provider.__update_article_info__(__MODULE__, ref, context, options)
       def __update_article_info__!(ref, context, options), do: Provider.__update_article_info__!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __init_article_info__(ref, context, options), do: Provider.__init_article_info__(__MODULE__, ref, context, options)
       def __init_article_info__!(ref, context, options), do: Provider.__init_article_info__!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def aref(ref, context, options), do: Provider.aref(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def article_info(ref, context, options), do: Provider.article_info(__MODULE__, ref, context, options)
       def article_info!(ref, context, options), do: Provider.article_info!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def versioning_record?(ref, context, options), do: Provider.versioning_record?(__MODULE__, ref, context, options)
       def versioning_record!(ref, context, options), do: Provider.versioning_record!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def active_version(ref, context, options), do: Provider.active_version(__MODULE__, ref, context, options)
       def active_version!(ref, context, options), do: Provider.active_version!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def active_revision(ref, context, options), do: Provider.active_revision(__MODULE__, ref, context, options)
       def active_revision!(ref, context, options), do: Provider.active_revision!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def active_revision(ref, version, context, options), do: Provider.active_revision(__MODULE__, ref, version, context, options)
       def active_revision!(ref, version, context, options), do: Provider.active_revision!(__MODULE__, ref, version, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def version(ref, context, options), do: Provider.version(__MODULE__, ref, context, options)
       def version!(ref, context, options), do: Provider.version!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def revision(ref, context, options), do: Provider.revision(__MODULE__, ref, context, options)
       def revision!(ref, context, options), do: Provider.revision!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def version_path_to_string(version_path), do: Provider.version_path_to_string(__MODULE__, version_path)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def article_id_to_string(identifier), do: Provider.article_id_to_string(__MODULE__, identifier)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def id_to_string(_type, identifier), do: Provider.id_to_string(__MODULE__, identifier)
       def id_to_string(identifier), do: Provider.id_to_string(__MODULE__, identifier)
 
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def string_to_id(_type, identifier), do: Provider.string_to_id(__MODULE__, identifier)
       def string_to_id(identifier), do: Provider.string_to_id(__MODULE__, identifier)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def article_string_to_id(identifier), do: Provider.article_string_to_id(__MODULE__, identifier)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"

@@ -35,7 +35,7 @@ defdatabase Noizu.V3.Testing.Database do
   #-----------------------------------------------------------------------------
   # @Fixture.Table
   #-----------------------------------------------------------------------------
-  deftable Fixture.Table, [:identifier, :type, :check_out, :flagged, :owner_pid, :entity], type: :set, index: [:type, :check_out, :flag, :owner_pid] do
+  deftable Fixture.Table, [:identifier, :type, :check_out, :flagged, :owner_pid, :entity], type: :set, index: [:type, :check_out, :flagged, :owner_pid] do
     @type t :: %__MODULE__{
                  identifier: tuple,
                  type: atom,
