@@ -18,7 +18,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Versioning.Entity do
   def post_defstruct(_options) do
     #options = Macro.expand(options, __ENV__)
     quote do
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
 
       alias Noizu.V3.CMS.Meta.ArticleType.Versioning.Entity.Default, as: Provider
 
