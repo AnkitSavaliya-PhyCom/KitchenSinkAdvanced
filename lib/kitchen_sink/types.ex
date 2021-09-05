@@ -1,6 +1,6 @@
 
-defmodule Noizu.KitchenSink.Types do
-  alias Noizu.KitchenSink.Types, as: T
+defmodule Noizu.KitchenSink.V3.Types do
+  alias Noizu.KitchenSink.V3.Types, as: T
   @vsn 1.00
   @type nmid :: integer # Mnesia Id
   @type nmaid :: atom # Mnesia Atom/Constant Id

@@ -20,7 +20,7 @@ defmodule Noizu.V3.CMS.Article.Image do
 
       internal_field :attributes
       internal_field :article_info
-      internal_field :time_stamp, nil, Noizu.Scaffolding.V3.TimeStamp.PersistenceStrategy
+      internal_field :time_stamp, nil, Noizu.DomainObject.TimeStamp.Second.TypeHandler
     end
     def sref_subtype(), do: "image"
   end

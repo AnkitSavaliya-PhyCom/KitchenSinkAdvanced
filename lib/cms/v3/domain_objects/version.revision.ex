@@ -18,7 +18,7 @@ defmodule Noizu.V3.CMS.Version.Revision do
       internal_field :status
       internal_field :archive_type
       internal_field :archive
-      internal_field :time_stamp, nil, Noizu.Scaffolding.V3.TimeStamp.PersistenceStrategy
+      internal_field :time_stamp, nil, Noizu.DomainObject.TimeStamp.Second.TypeHandler
     end
 
     def archive(revision, entity, _context, _options) do
@@ -36,10 +36,10 @@ defmodule Noizu.V3.CMS.Version.Revision do
         is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
         is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
         modified_on = source[:modified_on] ->
-          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+          current && %Noizu.DomainObject.TimeStamp.Second{current| modified_on: modified_on} || Noizu.DomainObject.TimeStamp.Second.new(modified_on)
         :else ->
           modified_on = options[:current_time] || DateTime.utc_now()
-          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+          current && %Noizu.DomainObject.TimeStamp.Second{current| modified_on: modified_on} || Noizu.DomainObject.TimeStamp.Second.new(modified_on)
       end
     end
     def overwrite_field(field, source, current, _context, _options) do
@@ -61,10 +61,10 @@ defmodule Noizu.V3.CMS.Version.Revision do
         is_map(source) && Map.has_key?(source, field) -> Map.get(source, field)
         is_list(source) && Keyword.has_key?(source, field) -> Keyword.get(source, field)
         modified_on = source[:modified_on] ->
-          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+          current && %Noizu.DomainObject.TimeStamp.Second{current| modified_on: modified_on} || Noizu.DomainObject.TimeStamp.Second.new(modified_on)
         :else ->
           modified_on = options[:current_time] || DateTime.utc_now()
-          current && %Noizu.Scaffolding.V3.TimeStamp{current| modified_on: modified_on} || Noizu.Scaffolding.V3.TimeStamp.new(modified_on)
+          current && %Noizu.DomainObject.TimeStamp.Second{current| modified_on: modified_on} || Noizu.DomainObject.TimeStamp.Second.new(modified_on)
       end
     end
     def update_field(field, source, current, _context, _options) do

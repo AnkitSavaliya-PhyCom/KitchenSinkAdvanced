@@ -1,8 +1,8 @@
 defmodule Noizu.Support.V3.CMS.DomainObject.Schema do
   require Noizu.DomainObject
-  alias Noizu.ElixirScaffolding.V3.Implementation.DomainObject.Scaffolding.DefaultScaffoldingSchemaProvider.Default, as: Provider
+  alias Noizu.DomainObject.SchemaInfo.Default, as: Provider
 
-  Noizu.DomainObject.noizu_scaffolding_schema(app: :kitchen_sink, base_prefix: Noizu.V3.CMS, database_prefix: Noizu.V3.CMS.Ecto) do
+  Noizu.DomainObject.noizu_schema_info(app: :kitchen_sink, base_prefix: Noizu.V3.CMS, database_prefix: Noizu.V3.CMS.Ecto) do
     @cache_keys %{
       mnesia_tables: :"__nzss__#{@app}__mnesia",
     }
@@ -28,18 +28,4 @@ defmodule Noizu.Support.V3.CMS.DomainObject.Schema do
       Elixir.Noizu.V3.CMS.Database.Article.VersionSequencer.Table => 7,
     }
   end
-end
-
-#--------------------------------
-#
-#--------------------------------
-defimpl Noizu.ERP, for: BitString do
-  def ref(sref), do: Jetzy.DomainObject.Schema.parse_sref(sref)
-  def id(sref), do: ref(sref) |> Noizu.ERP.id()
-  def sref("ref." <> _ = sref), do: sref
-  def sref(_), do: nil
-  def entity(sref, options \\ nil), do: Noizu.ERP.entity(ref(sref), options)
-  def entity!(sref, options \\ nil), do: Noizu.ERP.entity!(ref(sref), options)
-  def record(sref, options \\ nil), do: Noizu.ERP.record(ref(sref), options)
-  def record!(sref, options \\ nil), do: Noizu.ERP.record!(ref(sref), options)
 end

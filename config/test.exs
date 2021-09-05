@@ -5,5 +5,5 @@
 # is restricted to this project.
 import Config
 
-config :noizu_scaffolding,
+config :noizu_advanced_scaffolding,
        domain_object_schema: Noizu.Support.V3.CMS.DomainObject.Schema

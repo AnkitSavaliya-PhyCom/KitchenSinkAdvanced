@@ -3,7 +3,7 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.FastGlobal.Record do
+defmodule Noizu.FastGlobal.V3.Record do
   @vsn 1.0
   #-----------------------------------------------------------------------------
   # Struct & Types

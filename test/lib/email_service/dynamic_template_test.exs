@@ -3,10 +3,10 @@
 # Copyright (C) 2020 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.EmailService.DynamicTemplateTest do
+defmodule Noizu.EmailService.V3.DynamicTemplateTest do
   use ExUnit.Case, async: false
   require Logger
-  alias  Noizu.EmailService.Email.Binding.Substitution.Dynamic, as: Binding
+  alias  Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic, as: Binding
   alias Binding.Error
   alias Binding.Section
   alias Binding.Selector
@@ -562,7 +562,7 @@ defmodule Noizu.EmailService.DynamicTemplateTest do
 
     # define variable selector
     state = %Noizu.RuleEngine.State.InlineStateManager{}
-    options = %{variable_extractor: &Noizu.EmailService.Email.Binding.Substitution.Dynamic.variable_extractor/4}
+    options = %{variable_extractor: &Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic.variable_extractor/4}
     state = Noizu.RuleEngine.StateProtocol.put!(state, :bind_space, @default_binding, @context)
 
     {response, _state} = Noizu.RuleEngine.ScriptProtocol.execute!(sut, state, @context, options)
@@ -600,7 +600,7 @@ defmodule Noizu.EmailService.DynamicTemplateTest do
 
     actual_output = "#{inspect response, pretty: true}\n"
     expected_output = """
-    %Noizu.EmailService.Email.Binding.Substitution.Dynamic.Effective{
+    %Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic.Effective{
       bind: [Selector(nested.stuff2.user_name.last_name),
        Selector(required.variable.hint),
        Selector(nested.stuff2.user_name.unbound_field),
@@ -661,21 +661,21 @@ defmodule Noizu.EmailService.DynamicTemplateTest do
       },
       vsn: 1.0
     }
-    """
+    """ |> String.replace("\r\n", "\n")
     assert actual_output == expected_output
   end
 
   def fixture(fixture, options \\ %{})
   def fixture(:default, _options) do
-    %Noizu.EmailService.Email.Binding.Substitution.Dynamic{}
+    %Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic{}
   end
   def fixture(:foo_biz, _options) do
-    %Noizu.EmailService.Email.Binding.Substitution.Dynamic{
+    %Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic{
       section_stack: [%Section{current_selector: %Selector{selector: [ {:select, "foo"}, {:key, "biz"}]}}]
     }
   end
   def fixture(:foo_biz_bop, _options) do
-    %Noizu.EmailService.Email.Binding.Substitution.Dynamic{
+    %Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic{
       section_stack: [%Section{current_selector: %Selector{selector: [ {:select, "foo"}, {:key, "biz"}, {:key, "bop"}]}}]
     }
   end

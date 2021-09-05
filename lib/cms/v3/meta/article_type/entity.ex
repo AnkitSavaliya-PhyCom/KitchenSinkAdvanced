@@ -264,9 +264,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     end
 
     #------------------------------
-    # id_to_string
+    # __id_to_string__
     #------------------------------
-    def id_to_string(caller, identifier) do
+    def __id_to_string__(caller, identifier) do
       case identifier do
         nil -> nil
         {:revision, {e,i,v,r}} ->
@@ -347,8 +347,8 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     #------------------------------
     # string_to_id
     #------------------------------
-    def string_to_id(_caller, nil), do: nil
-    def string_to_id(caller, identifier) when is_bitstring(identifier) do
+    def __string_to_id__(_caller, nil), do: nil
+    def __string_to_id__(caller, identifier) when is_bitstring(identifier) do
       case identifier do
         "ref." <> _ -> {:error, {:unsupported, identifier}}
         _ ->
@@ -416,7 +416,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
           end
       end
     end
-    def string_to_id(_caller, i), do: {:error, {:unsupported, i}}
+    def __string_to_id__(_caller, i), do: {:error, {:unsupported, i}}
 
 
     #------------------------------
@@ -530,20 +530,20 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def article_id_to_string(identifier), do: Provider.article_id_to_string(__MODULE__, identifier)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
-      def id_to_string(_type, identifier), do: Provider.id_to_string(__MODULE__, identifier)
-      def id_to_string(identifier), do: Provider.id_to_string(__MODULE__, identifier)
+      def __id_to_string__(_type, identifier), do: Provider.__id_to_string__(__MODULE__, identifier)
+      def __id_to_string__(identifier), do: Provider.__id_to_string__(__MODULE__, identifier)
 
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
-      def string_to_id(_type, identifier), do: Provider.string_to_id(__MODULE__, identifier)
-      def string_to_id(identifier), do: Provider.string_to_id(__MODULE__, identifier)
+      def __string_to_id__(_type, identifier), do: Provider.__string_to_id__(__MODULE__, identifier)
+      def __string_to_id__(identifier), do: Provider.__string_to_id__(__MODULE__, identifier)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def article_string_to_id(identifier), do: Provider.article_string_to_id(__MODULE__, identifier)
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
       def ref("ref.#{@__nzdo__sref}{" <> id) do
-        identifier = case string_to_id(String.slice(id, 0..-2)) do
+        identifier = case __string_to_id__(String.slice(id, 0..-2)) do
                        {:ok, v} -> v
                        {:error, _} -> nil
                        v -> v
@@ -596,10 +596,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
 
         version_path_to_string: 1,
         article_id_to_string: 1,
-        id_to_string: 1,
-        id_to_string: 2,
-        string_to_id: 1,
-        string_to_id: 2,
+        __id_to_string__: 1,
+        __id_to_string__: 2,
+        __string_to_id__: 1,
+        __string_to_id__: 2,
         article_string_to_id: 1,
         ref: 1,
       ]

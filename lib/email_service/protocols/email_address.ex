@@ -22,11 +22,5 @@ if (Application.get_env(:noizu_email_service, :protocols, true)) do
       {:error, {:unsupported, reference}}
     end
   end # end defimpl
-
-  defimpl Noizu.Proto.EmailAddress, for: Noizu.KitchenSink.Support.UserEntity do
-    def email_details(reference) do
-      %{ref: Noizu.KitchenSink.Support.UserEntity.ref(reference), name: reference.name, email: reference.email}
-    end
-  end # end defimpl
 end
 

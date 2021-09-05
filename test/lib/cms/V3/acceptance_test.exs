@@ -115,7 +115,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       #-------------------------------------------
 
       #..........
-      # 1.1
+      # 1.-
       expected_1v1_version_path = {1, 1}
       expected_1v1_revision = 1
       post_1v1 = %Noizu.V3.CMS.Article.Post.Entity{post| body: MarkDown.new("[Updated](Content)")}

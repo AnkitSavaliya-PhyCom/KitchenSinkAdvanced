@@ -2,12 +2,12 @@ defmodule Noizu.KitchenSink.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :noizu_kitchen_sink,
+    [app: :noizu_kitchen_sink_advanced,
      version: "0.3.4",
      elixir: "~> 1.4",
      package: package(),
      deps: deps(),
-     description: "Noizu Kitchen Sink",
+     description: "Noizu Kitchen Sink Advanced",
      docs: docs(),
      elixirc_paths: elixirc_paths(Mix.env),
    ]
@@ -17,18 +17,18 @@ defmodule Noizu.KitchenSink.Mixfile do
     [
       maintainers: ["noizu"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/noizu/KitchenSink"}
+      links: %{"GitHub" => "https://github.com/noizu-labs/KitchenSinkAdvanced"}
     ]
   end # end package
 
   def application do
     [
       applications: [:logger],
-      extra_applications: [:uuid, :fastglobal, :semaphore, :amnesia, :noizu_core, :markdown, :noizu_mnesia_versioning, :noizu_rule_engine, :timex, :sendgrid, :noizu_scaffolding, :poison]
+      extra_applications: [:uuid, :fastglobal, :semaphore, :amnesia, :noizu_core, :markdown, :noizu_mnesia_versioning, :noizu_rule_engine, :timex, :sendgrid, :noizu_advanced_scaffolding, :poison]
     ]
   end # end application
 
-  defp deps do
+  def deps do
     [
       {:ex_doc, "~> 0.16.2", only: [:dev], optional: true}, # Documentation Provider
       {:markdown, github: "devinus/markdown", optional: false}, # Markdown processor for ex_doc
@@ -38,8 +38,8 @@ defmodule Noizu.KitchenSink.Mixfile do
       {:poison, "~> 3.1.0", override: true},
 
       {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.10", override: true},
-      {:noizu_simple_pool, git: "git@github.com:noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
-      {:noizu_scaffolding, git: "git@github.com:noizu-labs/ElixirScaffoldingAdvanced.git", branch: "master", override: true},
+      {:noizu_simple_pool_advanced, git: "git@github.com:noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
+      {:noizu_advanced_scaffolding, git: "git@github.com:noizu-labs/advanced_elixir_scaffolding.git", branch: "master", override: true},
 
       {:noizu_mnesia_versioning, github: "noizu/MnesiaVersioning", tag: "0.1.9", override: true},
       {:noizu_rule_engine, github: "noizu/RuleEngine", tag: "0.2.0"},

@@ -19,7 +19,7 @@ defmodule Noizu.V3.CMS.Article.File do
       public_field :file
 
       internal_field :article_info
-      internal_field :time_stamp, nil, Noizu.Scaffolding.V3.TimeStamp.PersistenceStrategy
+      internal_field :time_stamp, nil, Noizu.DomainObject.TimeStamp.Second.TypeHandler
     end
     def sref_subtype(), do: "file"
   end

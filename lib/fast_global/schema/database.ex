@@ -5,7 +5,7 @@
 
 use Amnesia
 
-defdatabase Noizu.FastGlobal.Database do
+defdatabase Noizu.FastGlobal.V3.Database do
   #-----------------------------------------------------------------------------
   # @Settings
   #-----------------------------------------------------------------------------

@@ -3,10 +3,10 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.FastGlobal.ChangeSet do
+defmodule Noizu.FastGlobal.V3.ChangeSet do
   alias Noizu.MnesiaVersioning.ChangeSet
   use Amnesia
-  use Noizu.FastGlobal.Database
+  use Noizu.FastGlobal.V3.Database
   use Noizu.MnesiaVersioning.SchemaBehaviour
 
   def neighbors() do
@@ -26,11 +26,11 @@ defmodule Noizu.FastGlobal.ChangeSet do
         environments: :all,
         update: fn() ->
                   neighbors = neighbors()
-                  create_table(Noizu.FastGlobal.Database.Settings, [disk: neighbors])
+                  create_table(Noizu.FastGlobal.V3.Database.Settings, [disk: neighbors])
                   :success
         end,
         rollback: fn() ->
-          destroy_table(Noizu.FastGlobal.Database.Settings)
+          destroy_table(Noizu.FastGlobal.V3.Database.Settings)
           :removed
         end
       }

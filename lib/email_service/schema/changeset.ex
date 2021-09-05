@@ -3,10 +3,10 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.EmailService.ChangeSet do
+defmodule Noizu.EmailService.V3.ChangeSet do
   alias Noizu.MnesiaVersioning.ChangeSet
   use Amnesia
-  use Noizu.EmailService.Database
+  use Noizu.EmailService.V3.Database
   use Noizu.MnesiaVersioning.SchemaBehaviour
 
   def neighbors() do
@@ -26,13 +26,13 @@ defmodule Noizu.EmailService.ChangeSet do
         environments: :all,
         update: fn() ->
                   neighbors = neighbors()
-                  create_table(Noizu.EmailService.Database.Email.TemplateTable, [disk: neighbors])
-                  create_table(Noizu.EmailService.Database.Email.QueueTable, [disk: neighbors])
+                  create_table(Noizu.EmailService.V3.Database.Email.Template.Table, [disk: neighbors])
+                  create_table(Noizu.EmailService.V3.Database.Email.Queue.Table, [disk: neighbors])
                   :success
         end,
         rollback: fn() ->
-          destroy_table(Noizu.EmailService.Database.Email.TemplateTable)
-          destroy_table(Noizu.EmailService.Database.Email.QueueTable)
+          destroy_table(Noizu.EmailService.V3.Database.Email.Template.Table)
+          destroy_table(Noizu.EmailService.V3.Database.Email.Queue.Table)
           :removed
         end
       },
@@ -43,11 +43,11 @@ defmodule Noizu.EmailService.ChangeSet do
         environments: :all,
         update: fn() ->
                   neighbors = neighbors()
-                  create_table(Noizu.EmailService.Database.Email.Queue.EventTable, [disk: neighbors])
+                  create_table(Noizu.EmailService.V3.Database.Email.Queue.Event.Table, [disk: neighbors])
                   :success
         end,
         rollback: fn() ->
-          destroy_table(Noizu.EmailService.Database.Email.Queue.EventTable)
+          destroy_table(Noizu.EmailService.V3.Database.Email.Queue.Event.Table)
           :removed
         end
       }

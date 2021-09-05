@@ -3,10 +3,10 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.SmartToken.ChangeSet do
+defmodule Noizu.SmartToken.V3.ChangeSet do
   alias Noizu.MnesiaVersioning.ChangeSet
   use Amnesia
-  use Noizu.SmartToken.Database
+  use Noizu.SmartToken.V3.Database
   use Noizu.MnesiaVersioning.SchemaBehaviour
 
   def neighbors() do
@@ -26,11 +26,11 @@ defmodule Noizu.SmartToken.ChangeSet do
         environments: :all,
         update: fn() ->
                   neighbors = neighbors()
-                  create_table(Noizu.SmartToken.Database.TokenTable, [disk: neighbors])
+                  create_table(Noizu.SmartToken.V3.Database.Token.Table, [disk: neighbors])
                   :success
         end,
         rollback: fn() ->
-          destroy_table(Noizu.SmartToken.Database.TokenTable)
+          destroy_table(Noizu.SmartToken.V3.Database.Token.Table)
           :removed
         end
       }

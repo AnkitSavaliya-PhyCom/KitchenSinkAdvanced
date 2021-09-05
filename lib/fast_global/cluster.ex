@@ -3,17 +3,17 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.FastGlobal.Cluster do
+defmodule Noizu.FastGlobal.V3.Cluster do
   @vsn 1.0
-  alias Noizu.FastGlobal.Record
+  alias Noizu.FastGlobal.V3.Record
 
   def get_settings() do
     get(:fast_global_settings,
       fn() ->
         try do
-          if :ok == Noizu.FastGlobal.Database.Settings.wait(100) do
-            case Noizu.FastGlobal.Database.Settings.read!(:fast_global_settings) do
-              %Noizu.FastGlobal.Database.Settings{value: v} -> v
+          if :ok == Noizu.FastGlobal.V3.Database.Settings.wait(100) do
+            case Noizu.FastGlobal.V3.Database.Settings.read!(:fast_global_settings) do
+              %Noizu.FastGlobal.V3.Database.Settings{value: v} -> v
               _ -> {:fast_global, :no_cache, %{}}
             end
           else
