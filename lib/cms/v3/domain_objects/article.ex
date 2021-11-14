@@ -10,6 +10,7 @@ defmodule Noizu.V3.CMS.Article do
   @poly_support [Noizu.V3.CMS.Article, Noizu.V3.CMS.Article.File, Noizu.V3.CMS.Article.Image, Noizu.V3.CMS.Article.Post]
   @poly_base Noizu.V3.CMS.Article
   @persistence_layer {Noizu.V3.CMS.Database, Noizu.V3.CMS.Database.Article.Table, cascade?: true, cascade_block?: true}
+  @nmid_index 999
   defmodule Entity do
     Noizu.V3.CMS.ArticleType.article_entity() do
       identifier :compound
