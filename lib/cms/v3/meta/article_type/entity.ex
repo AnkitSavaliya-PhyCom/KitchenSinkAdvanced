@@ -541,9 +541,10 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def article_string_to_id(identifier), do: Provider.article_string_to_id(__MODULE__, identifier)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
-      def ref("ref.#{@__nzdo__sref}{" <> id) do
-        identifier = case __string_to_id__(String.slice(id, 0..-2)) do
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
+      @ref_match "ref.#{@__nzdo__sref}{"
+      def ref(@ref_match <> identifier) do
+        identifier = case __string_to_id__(String.slice(identifier, 0..-2)) do
                        {:ok, v} -> v
                        {:error, _} -> nil
                        v -> v
