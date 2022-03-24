@@ -60,53 +60,99 @@ defimpl Noizu.V3.CMS.Protocol, for: Any do
   defmacro __deriving__(module, _struct, _opts) do
     quote do
       defimpl Noizu.V3.CMS.Protocol, for: unquote(module) do
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms__(_ref, _context, _options) do
           unquote(module).__cms__()
         end
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms__!(_ref, _context, _options), do: unquote(module).__cms__()
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms__(_ref, property, _context, _options), do: unquote(module).__cms__(property)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms__!(_ref, property, _context, _options), do: unquote(module).__cms__(property)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms_info__(ref, context, options), do: unquote(module).__cms_info__(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms_info__!(ref, context, options), do: unquote(module).__cms_info__!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms_info__(ref, property, context, options), do: unquote(module).__cms_info__(ref, property, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __cms_info__!(ref, property, context, options), do: unquote(module).__cms_info__!(ref, property, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __set_article_info__(ref, update, context, options), do: unquote(module).__set_article_info__(ref, update, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __set_article_info__!(ref, update, context, options), do: unquote(module).__set_article_info__!(ref, update, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __update_article_info__(ref, context, options), do: unquote(module).__update_article_info__(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __update_article_info__!(ref, context, options), do: unquote(module).__update_article_info__!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __init_article_info__(ref, context, options), do: unquote(module).__init_article_info__(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def __init_article_info__!(ref, context, options), do: unquote(module).__init_article_info__!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def aref(ref, context, options), do: unquote(module).aref(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def article(ref, context, options), do: unquote(module).article(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def article!(ref, context, options), do: unquote(module).article!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def article_info(ref, context, options), do: unquote(module).article_info(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def article_info!(ref, context, options), do: unquote(module).article_info!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def version(ref, context, options), do: unquote(module).version(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def version!(ref, context, options), do: unquote(module).version!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def revision(ref, context, options), do: unquote(module).revision(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def revision!(ref, context, options), do: unquote(module).revision!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def active_version(ref, context, options), do: unquote(module).active_version(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def active_version!(ref, context, options), do: unquote(module).active_version!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def active_revision(ref, version, context, options), do: unquote(module).active_revision(ref, version, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def active_revision!(ref, version, context, options), do: unquote(module).active_revision(ref, version, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def active_revision(ref, context, options), do: unquote(module).active_revision(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def active_revision!(ref, context, options), do: unquote(module).active_revision!(ref, context, options)
 
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def versioning_record?(ref, context, options), do: unquote(module).versioning_record?(ref, context, options)
+
+        @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
         def versioning_record!(ref, context, options), do: unquote(module).versioning_record!(ref, context, options)
       end
     end

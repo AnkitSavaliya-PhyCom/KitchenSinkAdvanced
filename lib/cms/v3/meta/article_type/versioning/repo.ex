@@ -17,13 +17,19 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Versioning.Repo do
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__(), do: nil
+
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__!(), do: nil
 
       #-----------------------------------------
       #
       #-----------------------------------------
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__(property), do: nil
+
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__!(property), do: nil
 
 

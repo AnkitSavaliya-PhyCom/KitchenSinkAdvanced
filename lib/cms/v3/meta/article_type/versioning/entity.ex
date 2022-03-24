@@ -22,10 +22,16 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Versioning.Entity do
 
       alias Noizu.V3.CMS.Meta.ArticleType.Versioning.Entity.Default, as: Provider
 
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__(), do: __repo__().__cms__()
+
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__!(), do: __repo__().__cms__!()
 
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__(property), do: __repo__().__cms__(property)
+
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __cms__!(property), do: __repo__().__cms__(property)
 
       defoverridable [

@@ -738,27 +738,27 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.CMS do
       def revisions(ref, context, options), do: @provider.revisions(__MODULE__, ref, context, options)
       def revisions!(ref, context, options), do: @provider.revisions!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def versions(ref, context, options), do: @provider.versions(__MODULE__, ref, context, options)
       def versions!(ref, context, options), do: @provider.versions!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def tags(ref, context, options), do: @provider.tags(__MODULE__, ref, context, options)
       def tags!(ref, context, options), do: @provider.tags!(__MODULE__, ref, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def set_tags(ref, tags, context, options), do: @provider.set_tags(__MODULE__, ref, tags, context, options)
       def set_tags!(ref, tags, context, options), do: @provider.set_tags!(__MODULE__, ref, tags, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def new_version(entity, context, options \\ nil), do: @provider.new_version(__MODULE__, entity, context, options)
       def new_version!(entity, context, options \\ nil), do: @provider.new_version!(__MODULE__, entity, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def new_revision(entity, context, options \\ nil), do: @provider.new_revision(__MODULE__, entity, context, options)
       def new_revision!(entity, context, options \\ nil), do: @provider.new_revision!(__MODULE__, entity, context, options)
 
-      @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       defoverridable [
         __cms__: 0,
         __cms__!: 0,
