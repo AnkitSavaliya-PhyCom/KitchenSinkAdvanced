@@ -3,7 +3,7 @@ defmodule Noizu.KitchenSink.Mixfile do
 
   def project do
     [app: :noizu_kitchen_sink_advanced,
-     version: "0.3.4",
+     version: "0.3.5",
      elixir: "~> 1.4",
      package: package(),
      deps: deps(),
@@ -32,7 +32,7 @@ defmodule Noizu.KitchenSink.Mixfile do
     [
       {:ex_doc, "~> 0.16.2", only: [:dev], optional: true}, # Documentation Provider
       {:markdown, github: "devinus/markdown", optional: false}, # Markdown processor for ex_doc
-      {:uuid, "~> 1.1" },
+      {:elixir_uuid, "~> 1.2" },
       {:exquisite, git: "https://github.com/noizu/exquisite.git", ref: "7a4a03d", override: true},
       {:amnesia, git: "https://github.com/noizu/amnesia.git", ref: "9266002", override: true}, # Mnesia Wrappeir
       {:poison, "~> 3.1.0", override: true},
