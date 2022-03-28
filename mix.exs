@@ -24,7 +24,7 @@ defmodule Noizu.KitchenSink.Mixfile do
   def application do
     [
       applications: [:logger],
-      extra_applications: [:uuid, :fastglobal, :semaphore, :amnesia, :noizu_core, :markdown, :noizu_mnesia_versioning, :noizu_rule_engine, :timex, :sendgrid, :noizu_advanced_scaffolding, :poison]
+      extra_applications: [:elixir_uuid, :fastglobal, :semaphore, :amnesia, :noizu_core, :markdown, :noizu_mnesia_versioning, :noizu_rule_engine, :timex, :sendgrid, :noizu_advanced_scaffolding, :poison]
     ]
   end # end application
 
