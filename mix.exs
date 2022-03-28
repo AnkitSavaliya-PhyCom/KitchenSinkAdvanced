@@ -37,7 +37,7 @@ defmodule Noizu.KitchenSink.Mixfile do
       {:amnesia, git: "https://github.com/noizu/amnesia.git", ref: "9266002", override: true}, # Mnesia Wrappeir
       {:poison, "~> 3.1.0", override: true},
 
-      {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.10", override: true},
+      {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.11", override: true},
       {:noizu_simple_pool_advanced, git: "https://github.com/noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
       {:noizu_advanced_scaffolding, git: "https://github.com/noizu-labs/advanced_elixir_scaffolding.git", branch: "master", override: true},
 
