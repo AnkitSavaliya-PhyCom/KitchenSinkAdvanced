@@ -38,7 +38,7 @@ defmodule Noizu.KitchenSink.Mixfile do
       {:poison, "~> 3.1.0", override: true},
 
       {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.11", override: true},
-      {:noizu_simple_pool_advanced, git: "https://github.com/noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
+      {:noizu_advanced_pool, git: "https://github.com/noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
       {:noizu_advanced_scaffolding, git: "https://github.com/noizu-labs/advanced_elixir_scaffolding.git", branch: "master", override: true},
 
       {:noizu_mnesia_versioning, github: "noizu/MnesiaVersioning", tag: "0.1.9", override: true},
