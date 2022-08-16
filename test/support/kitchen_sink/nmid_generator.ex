@@ -1,4 +1,4 @@
-defmodule Noizu.KitchenSink.V3.NmidGenerator do
+defmodule Noizu.KitchenSinkAdvanced.NmidGenerator do
   #@behaviour Noizu.Scaffolding.NmidBehaviour
 
   def generate(_seq, _opts \\ nil) do

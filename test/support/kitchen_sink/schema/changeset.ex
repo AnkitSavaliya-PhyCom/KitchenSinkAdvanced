@@ -3,10 +3,10 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.KitchenSink.V3.ChangeSet do
+defmodule Noizu.KitchenSinkAdvanced.ChangeSet do
   #alias Noizu.MnesiaVersioning.ChangeSet
   use Amnesia
-  use Noizu.KitchenSink.V3.Database
+  use Noizu.KitchenSinkAdvanced.Database
   use Noizu.MnesiaVersioning.SchemaBehaviour
 
   def neighbors() do

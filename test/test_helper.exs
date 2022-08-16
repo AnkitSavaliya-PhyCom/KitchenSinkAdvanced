@@ -19,7 +19,7 @@ Amnesia.Schema.create()
 Amnesia.start()
 
 # Support Records
-Noizu.KitchenSink.V3.Database.Support.User.Table.create(memory: [node()])
+Noizu.KitchenSinkAdvanced.Database.Support.User.Table.create(memory: [node()])
 
 # Email Service
 Noizu.EmailService.V3.Database.Email.Template.Table.create(memory: [node()])

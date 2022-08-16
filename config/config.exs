@@ -6,8 +6,8 @@
 import Config
 
 config :noizu_advanced_scaffolding,
-       default_audit_engine: Noizu.KitchenSink.AuditEngine,
-       default_nmid_generator: Noizu.KitchenSink.V3.NmidGenerator,
+       default_audit_engine: Noizu.KitchenSinkAdvanced.AuditEngine,
+       default_nmid_generator: Noizu.KitchenSinkAdvanced.NmidGenerator,
        domain_object_schema: Noizu.Support.V3.CMS.DomainObject.Schema
 
 config :sendgrid,

@@ -52,11 +52,11 @@ defdatabase Noizu.V3.CMS.Database do
            type: :set,
            index: [:status, :manager, :article_type, :editor, :created_on, :modified_on] do
     @type t :: %__MODULE__{
-                 article: Noizu.KitchenSink.Types.entity_reference,
+                 article: Noizu.KitchenSinkAdvanced.Types.entity_reference,
                  status: :approved | :pending | :disabled | atom,
                  manager: atom,
                  article_type: :post | :file | :image | :default | atom | any,
-                 editor: Noizu.KitchenSink.Types.entity_reference,
+                 editor: Noizu.KitchenSinkAdvanced.Types.entity_reference,
                  created_on: integer,
                  modified_on: integer,
                  active_version: any,
@@ -69,7 +69,7 @@ defdatabase Noizu.V3.CMS.Database do
   #-----------------------------------------------------------------------------
   deftable Article.Tag.Table, [:article, :tag], type: :bag, index: [:tag] do
     @type t :: %__MODULE__{
-                 article: Noizu.KitchenSink.Types.entity_reference,
+                 article: Noizu.KitchenSinkAdvanced.Types.entity_reference,
                  tag: atom,
                }
   end # end deftable

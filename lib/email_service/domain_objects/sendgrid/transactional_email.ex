@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
-  alias Noizu.KitchenSink.V3.Types, as: T
+  alias Noizu.KitchenSinkAdvanced.Types, as: T
   alias Noizu.EmailService.V3.Email.Binding
   alias Noizu.EmailService.V3.Email.Template
   alias Noizu.EmailService.V3.Email.Queue

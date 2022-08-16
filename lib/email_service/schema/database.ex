@@ -64,8 +64,8 @@ defdatabase Noizu.EmailService.V3.Database do
     """
     @type t :: %Email.Queue.Table{
                  identifier: any,
-                 recipient: Noizu.KitchenSink.Types.entity_reference,
-                 sender: Noizu.KitchenSink.Types.entity_reference,
+                 recipient: Noizu.KitchenSinkAdvanced.Types.entity_reference,
+                 sender: Noizu.KitchenSinkAdvanced.Types.entity_reference,
                  state: :queued | :delivered | :undeliverable | :retrying | :error,
                  created_on: integer,
                  retry_on: nil | integer,
