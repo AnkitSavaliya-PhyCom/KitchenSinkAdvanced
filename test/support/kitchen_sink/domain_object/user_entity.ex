@@ -3,11 +3,11 @@
 # Copyright (C) 2021 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.KitchenSinkAdvanced.Support.User do
+defmodule Noizu.KitchenSink.V3.Support.User do
   use Noizu.DomainObject
   @vsn 1.0
   @sref "test-user"
-  @persistence_layer {Noizu.KitchenSinkAdvanced.Database, cascade_block?: true, table: Noizu.KitchenSinkAdvanced.Database.Support.User.Table}
+  @persistence_layer {Noizu.KitchenSink.V3.Database, cascade_block?: true, table: Noizu.KitchenSink.V3.Database.Support.User.Table}
   defmodule Entity do
     @universal_identifier false
     Noizu.DomainObject.noizu_entity() do
@@ -31,8 +31,8 @@ defmodule Noizu.KitchenSinkAdvanced.Support.User do
 
 end # end defmodule
 
-defimpl Noizu.Proto.EmailAddress, for: Noizu.KitchenSinkAdvanced.Support.User.Entity do
+defimpl Noizu.Proto.EmailAddress, for: Noizu.KitchenSink.V3.Support.User.Entity do
   def email_details(reference) do
-    %{ref: Noizu.KitchenSinkAdvanced.Support.User.Entity.ref(reference), name: reference.name, email: reference.email}
+    %{ref: Noizu.KitchenSink.V3.Support.User.Entity.ref(reference), name: reference.name, email: reference.email}
   end
 end # end defimpl

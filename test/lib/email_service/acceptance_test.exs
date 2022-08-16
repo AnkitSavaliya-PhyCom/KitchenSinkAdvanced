@@ -38,10 +38,10 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
     template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -92,18 +92,18 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
     template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
              |> Noizu.ERP.ref()
 
     bcc = [
-      %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: nil, email: "keith.brings+bcc1@noizu.com"},
-      %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "BCC Name", email: "keith.brings+bcc2@noizu.com"}
+      %Noizu.KitchenSink.V3.Support.User.Entity{name: nil, email: "keith.brings+bcc1@noizu.com"},
+      %Noizu.KitchenSink.V3.Support.User.Entity{name: "BCC Name", email: "keith.brings+bcc2@noizu.com"}
     ]
 
-    reply_to = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
+    reply_to = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -148,19 +148,19 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
     template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
              |> Noizu.ERP.ref()
 
     bcc = [
-      %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: nil, email: "keith.brings+bcc1@noizu.com"},
-      %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "BCC Name", email: "keith.brings+bcc2@noizu.com"},
+      %Noizu.KitchenSink.V3.Support.User.Entity{name: nil, email: "keith.brings+bcc1@noizu.com"},
+      %Noizu.KitchenSink.V3.Support.User.Entity{name: "BCC Name", email: "keith.brings+bcc2@noizu.com"},
       nil
     ]
 
-    reply_to = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
+    reply_to = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -185,13 +185,13 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
     template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: nil}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: nil}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
              |> Noizu.ERP.ref()
 
-    reply_to = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
+    reply_to = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -215,13 +215,13 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
     template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: nil}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: nil}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
              |> Noizu.ERP.ref()
 
-    reply_to = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
+    reply_to = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Reply To Name", email: "keith.brings+reply@noizu.com"}
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -245,13 +245,13 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
     template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
              |> Noizu.ERP.ref()
 
-    reply_to = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Reply To Name", email: nil}
+    reply_to = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Reply To Name", email: nil}
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -274,10 +274,10 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
     template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -310,11 +310,11 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
 
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
 
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,
@@ -357,11 +357,11 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
 
-    recipient = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
-                |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
+                |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
 
-    sender = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
-             |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
+    sender = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Sender Name", email: "keith.brings+sender@noizu.com"}
+             |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
 
     email = %Noizu.EmailService.V3.SendGrid.TransactionalEmail{
       template: template_ref,

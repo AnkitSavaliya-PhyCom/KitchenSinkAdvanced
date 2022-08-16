@@ -1,4 +1,4 @@
-defmodule Noizu.KitchenSinkAdvanced.Mixfile do
+defmodule Noizu.KitchenSink.V3.Mixfile do
   use Mix.Project
 
   def project do

@@ -5,7 +5,7 @@
 
 use Amnesia
 
-defdatabase Noizu.KitchenSinkAdvanced.Database do
+defdatabase Noizu.KitchenSink.V3.Database do
 
   def database(), do: __MODULE__
 

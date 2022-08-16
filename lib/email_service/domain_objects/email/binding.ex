@@ -5,7 +5,7 @@
 
 defmodule Noizu.EmailService.V3.Email.Binding do
   @vsn 1.0
-  alias Noizu.KitchenSinkAdvanced.Types, as: T
+  alias Noizu.KitchenSink.V3.Types, as: T
 
   alias Noizu.EmailService.V3.SendGrid.TransactionalEmail
   alias Noizu.EmailService.V3.Email.Template

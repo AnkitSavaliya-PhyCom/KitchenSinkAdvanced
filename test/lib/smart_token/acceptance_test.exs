@@ -12,9 +12,9 @@ defmodule Noizu.SmartToken.V3.AcceptanceTest do
 
   @tag :smart_token
   test "Account Verification Create & Redeem" do
-    user = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "SmartToken Account Verification Test"}
-           |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    user_ref = Noizu.KitchenSinkAdvanced.Support.User.Entity.ref(user)
+    user = %Noizu.KitchenSink.V3.Support.User.Entity{name: "SmartToken Account Verification Test"}
+           |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    user_ref = Noizu.KitchenSink.V3.Support.User.Entity.ref(user)
     bindings = %{recipient: user_ref}
     smart_token = Noizu.SmartToken.V3.Token.Repo.account_verification_token(%{})
                   |> Noizu.SmartToken.V3.Token.Repo.bind!(bindings, @context, %{})
@@ -37,9 +37,9 @@ defmodule Noizu.SmartToken.V3.AcceptanceTest do
 
   @tag :smart_token
   test "Account Verification - Max Attempts Exceeded - Single Use" do
-    user = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "SmartToken Account Verification Test"}
-           |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    user_ref = Noizu.KitchenSinkAdvanced.Support.User.Entity.ref(user)
+    user = %Noizu.KitchenSink.V3.Support.User.Entity{name: "SmartToken Account Verification Test"}
+           |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    user_ref = Noizu.KitchenSink.V3.Support.User.Entity.ref(user)
     bindings = %{recipient: user_ref}
     smart_token = Noizu.SmartToken.V3.Token.Repo.account_verification_token(%{})
                   |> Noizu.SmartToken.V3.Token.Repo.bind!(bindings, @context, %{})
@@ -52,9 +52,9 @@ defmodule Noizu.SmartToken.V3.AcceptanceTest do
 
   @tag :smart_token
   test "Account Verification - Max Attempts Exceeded - Multi Use" do
-    user = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "SmartToken Account Verification Test"}
-           |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    user_ref = Noizu.KitchenSinkAdvanced.Support.User.Entity.ref(user)
+    user = %Noizu.KitchenSink.V3.Support.User.Entity{name: "SmartToken Account Verification Test"}
+           |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    user_ref = Noizu.KitchenSink.V3.Support.User.Entity.ref(user)
     bindings = %{recipient: user_ref}
     options = %{extended_info: %{multi_use: true, limit: 3}}
     smart_token = Noizu.SmartToken.V3.Token.Repo.account_verification_token(options)
@@ -73,9 +73,9 @@ defmodule Noizu.SmartToken.V3.AcceptanceTest do
 
   @tag :smart_token
   test "Account Verification - Expired" do
-    user = %Noizu.KitchenSinkAdvanced.Support.User.Entity{name: "SmartToken Account Verification Test"}
-           |> Noizu.KitchenSinkAdvanced.Support.User.Repo.create!(@context)
-    user_ref = Noizu.KitchenSinkAdvanced.Support.User.Entity.ref(user)
+    user = %Noizu.KitchenSink.V3.Support.User.Entity{name: "SmartToken Account Verification Test"}
+           |> Noizu.KitchenSink.V3.Support.User.Repo.create!(@context)
+    user_ref = Noizu.KitchenSink.V3.Support.User.Entity.ref(user)
     bindings = %{recipient: user_ref}
     options = %{extended_info: %{multi_use: true, limit: 3}}
     smart_token = Noizu.SmartToken.V3.Token.Repo.account_verification_token(options)
