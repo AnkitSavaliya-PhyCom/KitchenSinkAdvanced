@@ -19,6 +19,16 @@ defmodule Noizu.EmailService.V3.DynamicTemplateTest do
     if_elseif_else: 3,
     if_elseif: 1,
     if_elseunless_else: 2,
+    map_var: %{
+     a: 1,
+     b: 2,
+     c: 3,
+    },
+    array_var: [
+      :a,
+      :b,
+      :c,
+    ],
     required: %{
       only_if_selection: %{
         hint: 42
@@ -62,6 +72,16 @@ defmodule Noizu.EmailService.V3.DynamicTemplateTest do
       goodness: -1
     }
   }
+  
+  
+  @key_and_index_template """
+    {{#each map_var}}
+       {{@key}} - {{this}} {{#if @key
+    {{/each}}
+    {{#each array_var}}
+     {{@index}} - {{this}}
+    {{/each}}
+  """
 
   @template """
   {{!bind required.variable.hint}}
@@ -528,6 +548,12 @@ defmodule Noizu.EmailService.V3.DynamicTemplateTest do
   end
 
 
+  @tag :email
+  @tag :dynamic_template
+  test "Extract Map and Arrays" do
+    sut = Binding.extract(@key_and_index_template)
+    assert sut.errors == []
+  end
 
 
   @tag :email

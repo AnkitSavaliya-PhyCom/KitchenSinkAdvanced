@@ -3,7 +3,7 @@ defmodule Noizu.KitchenSink.V3.Mixfile do
 
   def project do
     [app: :noizu_kitchen_sink_advanced,
-     version: "0.3.7",
+     version: "0.3.8",
      elixir: "~> 1.4",
      package: package(),
      deps: deps(),
@@ -36,7 +36,9 @@ defmodule Noizu.KitchenSink.V3.Mixfile do
       {:exquisite, git: "https://github.com/noizu/exquisite.git", ref: "7a4a03d", override: true},
       {:amnesia, git: "https://github.com/noizu/amnesia.git", ref: "9266002", override: true}, # Mnesia Wrappeir
       {:poison, "~> 3.1.0", override: true},
-
+      {:plug, "~> 1.13.6", optional: true, override: true},
+      {:telemetry, "~> 1.1.0", [optional: true, override: true]},
+    
       {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.17", override: true},
       {:noizu_advanced_pool, git: "https://github.com/noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
       {:noizu_advanced_scaffolding, git: "https://github.com/noizu-labs/advanced_elixir_scaffolding.git", branch: "master", override: true},

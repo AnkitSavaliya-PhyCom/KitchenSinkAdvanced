@@ -219,7 +219,23 @@ defmodule Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic.Selector do
   def wildcard(this) do
     %__MODULE__{this| selector: this.selector ++ [{:*}]}
   end
-
+#
+#  #----------------------------------
+#  #
+#  #----------------------------------
+#  def key(this) do
+#    IO.inspect this
+#    %__MODULE__{this| selector: this.selector ++ [{:key}]}
+#  end
+#
+#  #----------------------------------
+#  #
+#  #----------------------------------
+#  def index(this) do
+#    IO.inspect this
+#    %__MODULE__{this| selector: this.selector ++ [{:index}]}
+#  end
+#
   #----------------------------------
   #
   #----------------------------------

@@ -77,8 +77,12 @@ defmodule Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic do
 
         # 3. Strip plain comments.
         block = String.replace(block, ~r/\{\{!.*\}\}/U, "")
-
-        # 4. Parse Tokens and Specifiers
+        
+        # 4. Temp. Strip @key and @index
+        block = String.replace(block, ~r/\{\{@key\}\}/U, "")
+        block = String.replace(block, ~r/\{\{@index\}\}/U, "")
+        
+        # 5. Parse Tokens and Specifiers
         case Regex.scan(~r/\{\{([^\}]+)\}\}/, block, capture: :all_but_first) do
           v when is_list(v) ->
             List.flatten(v)
@@ -372,6 +376,7 @@ defmodule Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic do
   def extended_extract_selector(this, nil, _options), do: {{nil, nil}, this}
   def extended_extract_selector(this, token, options) do
     token = String.trim(token)
+    #IO.puts "CHECK TOKEN #{inspect token}"
     cond do
       token == "this" || token == "." ->
         selector = current_selector(this)
@@ -419,7 +424,7 @@ defmodule Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic do
                _ ->
                  {:error, mark_error(this, {:invalid_token, token}, options)}
            end
-
+           
           token ->
           case Regex.run(~r/^([a-zA-Z0-9_]+)((?:[\.\[\]]@?[a-zA-Z0-9_]+)*)\]?(\s.*\|.*)?$/, token, capture: :all_but_first) do
             [a,b|c] ->
