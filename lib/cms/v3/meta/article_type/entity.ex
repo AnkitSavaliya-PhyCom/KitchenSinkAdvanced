@@ -264,6 +264,14 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
     end
 
     #------------------------------
+    # __valid_identifier__
+    #------------------------------
+    def __valid_identifier__(identifier) when is_integer(identifier), do: :ok
+    def __valid_identifier__({:revision, {_, _, _, _}}), do: :ok
+    def __valid_identifier__({:version, {_, _, _}}), do: :ok
+    def __valid_identifier__(id), do: {:error, {:unsupported, id}}
+    
+    #------------------------------
     # __id_to_string__
     #------------------------------
     def __id_to_string__(caller, identifier) do
@@ -530,6 +538,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def article_id_to_string(identifier), do: Provider.article_id_to_string(__MODULE__, identifier)
 
       @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
+      def __valid_identifier__(identifier), do: Provider.__valid_identifier__(identifier)
+      
+      @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
       def __id_to_string__(_type, identifier), do: Provider.__id_to_string__(__MODULE__, identifier)
       def __id_to_string__(identifier), do: Provider.__id_to_string__(__MODULE__, identifier)
 
@@ -542,7 +553,7 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
       def article_string_to_id(identifier), do: Provider.article_string_to_id(__MODULE__, identifier)
 
       @file unquote(__ENV__.file) <> ":#{unquote(__ENV__.line)}" <> "(via #{__ENV__.file}:#{__ENV__.line})"
-      @ref_match "ref.#{@__nzdo__sref}{"
+      @ref_match "ref.#{@__nzdo__sref}.{"
       def ref(@ref_match <> identifier) do
         identifier = case __string_to_id__(String.slice(identifier, 0..-2)) do
                        {:ok, v} -> v
@@ -556,7 +567,9 @@ defmodule Noizu.V3.CMS.Meta.ArticleType.Entity do
           _ -> nil
         end
       end
-      def ref(ref), do: super(ref)
+      def ref(ref) do
+        super(ref)
+      end
 
 
       @file unquote(__ENV__.file) <> "(#{unquote(__ENV__.line)})"

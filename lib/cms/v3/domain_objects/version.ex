@@ -11,7 +11,7 @@ defmodule Noizu.V3.CMS.Version do
   @auto_generate false
   defmodule Entity do
     Noizu.V3.CMS.ArticleType.Versioning.versioning_entity() do
-      identifier :integer
+      identifier :compound
       internal_field :article
       internal_field :parent
       internal_field :editor

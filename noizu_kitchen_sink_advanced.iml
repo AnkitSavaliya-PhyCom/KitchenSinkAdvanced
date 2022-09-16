@@ -85,6 +85,9 @@
       <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/plug_crypto" />
       <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/noizu_advanced_pool" />
       <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/plug" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/telemetry" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/con_cache" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/con_cache" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="ex_doc" level="project" />
@@ -151,5 +154,7 @@
     <orderEntry type="library" name="connection" level="project" />
     <orderEntry type="library" name="elixir_uuid" level="project" />
     <orderEntry type="library" name="noizu_advanced_pool" level="project" />
+    <orderEntry type="library" name="rocksdb" level="project" />
+    <orderEntry type="library" name="con_cache" level="project" />
   </component>
 </module>

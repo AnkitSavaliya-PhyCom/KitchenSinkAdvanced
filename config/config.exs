@@ -11,11 +11,10 @@ config :noizu_advanced_scaffolding,
        domain_object_schema: Noizu.Support.V3.CMS.DomainObject.Schema
 
 config :sendgrid,
-       api_key: System.get_env("SENDGRID_KS_KEY"),
+       api_key: System.get_env("NOIZU_SENDGRID_KS_KEY"),
        simulate: false,
        email_site_url: "https://github.com/noizu/KitchenSink"
 
 
 
-#IO.puts "[[[[[[[[[[[[[[[ #{config_env()}.exs"
 import_config "#{config_env()}.exs"

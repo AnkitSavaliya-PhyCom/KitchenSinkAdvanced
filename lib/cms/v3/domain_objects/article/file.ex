@@ -22,5 +22,8 @@ defmodule Noizu.V3.CMS.Article.File do
       internal_field :time_stamp, nil, Noizu.DomainObject.TimeStamp.Second.TypeHandler
     end
     def sref_subtype(), do: "file"
+    def id({:ref, _, id}), do: super(id)
+    def id(v), do: super(v)
+    
   end
 end

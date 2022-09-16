@@ -9,7 +9,6 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
 
   @context Noizu.ElixirCore.CallingContext.admin()
 
-
   def assert_eventually(msg, lambda, timeout \\ 5_000) do
     timeout = cond do
                 timeout < 100_000 -> :os.system_time(:millisecond) + timeout
@@ -33,9 +32,20 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   end
 
   @tag :email
+  @tag :wip
+  test "Template Persistence" do
+    %Noizu.EmailService.V3.Email.Template.Entity{
+      identifier: {:noizu, :template}
+    } |> Noizu.EmailService.V3.Email.Template.Repo.create!(@context)
+    sut = Noizu.EmailService.V3.Email.Template.Entity.entity!({:noizu, :template})
+    assert sut != nil
+    assert sut.identifier == {:noizu, :template}
+  end
+  
+  @tag :email
   @tag :legacy_email
   test "Send Transactional Email (Legacy)" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
     recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
@@ -89,7 +99,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :legacy_email
   test "Send Transactional Email (Legacy) email overrides and raw email persistence" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
     recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
@@ -145,7 +155,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :legacy_email
   test "Send Transactional Email (Legacy) invalid bcc" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
     recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
@@ -182,7 +192,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :legacy_email
   test "Send Transactional Email (Legacy) invalid recipient" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
     recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: nil}
@@ -212,7 +222,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :legacy_email
   test "Send Transactional Email (Legacy) invalid sender" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
     recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
@@ -242,7 +252,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :legacy_email
   test "Send Transactional Email (Legacy) invalid reply_to" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
     recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
@@ -271,7 +281,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :legacy_email
   test "Send Transactional Email Failure (Legacy)" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
     recipient = %Noizu.KitchenSink.V3.Support.User.Entity{name: "Recipient Name", email: "keith.brings+recipient@noizu.com"}
@@ -306,7 +316,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :dynamic_email
   test "Send Transactional Email (Dynamic)" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_dynamic_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_dynamic_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
 
@@ -353,7 +363,7 @@ defmodule Noizu.EmailService.V3.AcceptanceTest do
   @tag :email
   @tag :dynamic_email
   test "Send Transactional Email Failure (Dynamic)" do
-    template = Noizu.EmailService.V3.Email.Template.Repo.get!(:test_dynamic_template, @context)
+    template = Noizu.EmailService.V3.Email.Template.Repo.get!({:noizu, :test_dynamic_template}, @context)
                |> Noizu.Proto.EmailServiceTemplate.refresh!(@context)
     template_ref = Noizu.EmailService.V3.Email.Template.Entity.ref(template)
 

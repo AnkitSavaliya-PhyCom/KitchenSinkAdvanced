@@ -23,5 +23,7 @@ defmodule Noizu.V3.CMS.Article.Image do
       internal_field :time_stamp, nil, Noizu.DomainObject.TimeStamp.Second.TypeHandler
     end
     def sref_subtype(), do: "image"
+    def id({:ref, _, id}), do: super(id)
+    def id(v), do: super(v)
   end
 end

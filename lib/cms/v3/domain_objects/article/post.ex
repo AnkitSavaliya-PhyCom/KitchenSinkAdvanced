@@ -21,5 +21,7 @@ defmodule Noizu.V3.CMS.Article.Post do
       internal_field :time_stamp, nil, Noizu.DomainObject.TimeStamp.Second.TypeHandler
     end
     def sref_subtype(), do: "post"
+    def id({:ref, _, id}), do: super(id)
+    def id(v), do: super(v)
   end
 end

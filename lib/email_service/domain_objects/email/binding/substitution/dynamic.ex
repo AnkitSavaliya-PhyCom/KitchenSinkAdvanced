@@ -376,7 +376,6 @@ defmodule Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic do
   def extended_extract_selector(this, nil, _options), do: {{nil, nil}, this}
   def extended_extract_selector(this, token, options) do
     token = String.trim(token)
-    #IO.puts "CHECK TOKEN #{inspect token}"
     cond do
       token == "this" || token == "." ->
         selector = current_selector(this)

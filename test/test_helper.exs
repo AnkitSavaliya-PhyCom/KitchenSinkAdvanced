@@ -28,7 +28,7 @@ Noizu.EmailService.V3.Database.Email.Queue.Event.Table.create(memory: [node()])
 
 # Setup Template
 %Noizu.EmailService.V3.Email.Template.Entity{
-  identifier: :test_template,
+  identifier: {:noizu, :test_template},
   name: "Test Template",
   description: "Template Description",
   external_template_identifier: {:sendgrid, "ccbe9d68-59ab-4639-87a8-07ab73a8dcc1"}, # todo standardize ref
@@ -37,7 +37,7 @@ Noizu.EmailService.V3.Database.Email.Queue.Event.Table.create(memory: [node()])
 
 
 %Noizu.EmailService.V3.Email.Template.Entity{
-  identifier: :test_dynamic_template,
+  identifier: {:noizu, :test_dynamic_template},
   name: "Test Template",
   description: "Template Description",
   external_template_identifier: {:sendgrid, "d-e09ef095b9f641d8a35d862ec8882d9c"}, # todo standardize ref

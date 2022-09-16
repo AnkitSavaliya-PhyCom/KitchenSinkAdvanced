@@ -25,6 +25,10 @@ defmodule Noizu.V3.CMS.Article do
 
     def sref_subtype(), do: "article"
 
+    def id({:ref, _, id}), do: super(id)
+    def id(v), do: super(v)
+    
+    
   end
 
   defmodule Repo do

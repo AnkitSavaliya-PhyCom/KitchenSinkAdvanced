@@ -3,7 +3,7 @@ defmodule Noizu.KitchenSink.V3.Mixfile do
 
   def project do
     [app: :noizu_kitchen_sink_advanced,
-     version: "0.3.8",
+     version: "0.3.9",
      elixir: "~> 1.4",
      package: package(),
      deps: deps(),
@@ -41,7 +41,7 @@ defmodule Noizu.KitchenSink.V3.Mixfile do
     
       {:noizu_core, github: "noizu/ElixirCore", tag: "1.0.17", override: true},
       {:noizu_advanced_pool, git: "https://github.com/noizu-labs/SimplePoolAdvanced.git", branch: "master", override: true},
-      {:noizu_advanced_scaffolding, git: "https://github.com/noizu-labs/advanced_elixir_scaffolding.git", branch: "master", override: true},
+      {:noizu_advanced_scaffolding, git: "https://github.com/noizu-labs/ElixirScaffoldingAdvanced.git", tag: "1.2.8", override: true},
 
       {:noizu_mnesia_versioning, github: "noizu/MnesiaVersioning", tag: "0.1.9", override: true},
       {:noizu_rule_engine, github: "noizu/RuleEngine", tag: "0.2.0"},
