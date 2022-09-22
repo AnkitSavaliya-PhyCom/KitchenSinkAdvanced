@@ -115,13 +115,13 @@ defmodule Noizu.EmailService.V3.Email.Binding do
     #-------------------------------
     # 3. Return Binding Structure
     #-------------------------------------
-    recipient = Noizu.Proto.EmailAddress.email_details(txn_email.recipient)
-    sender = Noizu.Proto.EmailAddress.email_details(txn_email.sender)
-    reply_to = Noizu.Proto.EmailAddress.email_details(txn_email.reply_to)
+    recipient = Noizu.V3.Proto.EmailAddress.email_details(txn_email.recipient)
+    sender = Noizu.V3.Proto.EmailAddress.email_details(txn_email.sender)
+    reply_to = Noizu.V3.Proto.EmailAddress.email_details(txn_email.reply_to)
 
     outcome = effective_binding.outcome
     {bcc, outcome} = Enum.map_reduce(txn_email.bcc || [], outcome, fn(bcc, o) ->
-      case Noizu.Proto.EmailAddress.email_details(bcc) do
+      case Noizu.V3.Proto.EmailAddress.email_details(bcc) do
         {:error, details} ->
           cond do
             o != :ok -> {nil, o}

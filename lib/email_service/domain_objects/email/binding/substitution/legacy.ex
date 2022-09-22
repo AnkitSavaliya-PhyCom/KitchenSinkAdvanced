@@ -62,7 +62,7 @@ defmodule Noizu.EmailService.V3.Email.Binding.Substitution.Legacy do
 
     case value do
       {:error, details} -> {:error, details}
-      _ -> Noizu.Proto.EmailBind.format(value)
+      _ -> Noizu.V3.Proto.EmailBind.format(value)
     end
   end # end extract_binding/2
 

@@ -1,4 +1,4 @@
-defmodule Noizu.Testing.Mnesia do
+defmodule Noizu.V3.Testing.Mnesia do
   defmodule Emulator do
     use Agent
     @initial_state  %{tables: %{}, event: 0, history: []}
@@ -179,7 +179,7 @@ defmodule Noizu.Testing.Mnesia do
   end
 
   defmodule TableMocker do
-    alias Noizu.Testing.Mnesia.Emulator, as: MockDB
+    alias Noizu.V3.Testing.Mnesia.Emulator, as: MockDB
 
     #--------------------
     #
@@ -299,7 +299,7 @@ defmodule Noizu.Testing.Mnesia do
     defmacro customize(options \\ [], [do: block]) do
       options = Macro.expand(options, __ENV__)
       quote do
-        alias Noizu.Testing.Mnesia.TableMocker, as: MockDBTable
+        alias Noizu.V3.Testing.Mnesia.TableMocker, as: MockDBTable
         #--------------------
         #
         #--------------------
@@ -357,7 +357,7 @@ defmodule Noizu.Testing.Mnesia do
 
 
         #===========================================================
-        # annotation dependend methods, can be overriden by caller by adding overrides after Noizu.Testing.Mnesia.mock_table() do .. end section
+        # annotation dependend methods, can be overriden by caller by adding overrides after Noizu.V3.Testing.Mnesia.mock_table() do .. end section
         #===========================================================
         base = Module.split(__MODULE__) |> Enum.slice(0..-2) |> Module.concat()
         base_open = Module.open?(base)

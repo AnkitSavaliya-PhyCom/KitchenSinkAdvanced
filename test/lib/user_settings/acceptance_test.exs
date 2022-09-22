@@ -3,11 +3,11 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.UserSettings.AcceptanceTest do
+defmodule Noizu.V3.UserSettings.AcceptanceTest do
   use ExUnit.Case, async: false
   require Logger
-  alias Noizu.UserSettings.Settings
-  alias Noizu.UserSettings.Setting
+  alias Noizu.V3.UserSettings.Settings
+  alias Noizu.V3.UserSettings.Setting
 
   #@context Noizu.ElixirCore.CallingContext.admin()
 

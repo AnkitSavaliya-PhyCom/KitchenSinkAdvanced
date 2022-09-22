@@ -98,6 +98,6 @@ defmodule Noizu.EmailService.V3.Email.Template do
   end
 end
 
-defimpl Noizu.Proto.EmailServiceTemplate, for: Noizu.EmailService.V3.Email.Template.Entity do
+defimpl Noizu.V3.Proto.EmailServiceTemplate, for: Noizu.EmailService.V3.Email.Template.Entity do
   defdelegate refresh!(template, context), to: Noizu.EmailService.V3.Email.Template.Entity
 end

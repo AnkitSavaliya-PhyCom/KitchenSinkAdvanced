@@ -3,7 +3,7 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.UserSettings.Settings do
+defmodule Noizu.V3.UserSettings.Settings do
   @type t :: %__MODULE__{
                settings: Map.t,
              }
@@ -21,7 +21,7 @@ defmodule Noizu.UserSettings.Settings do
   def append(%__MODULE__{} = a, %__MODULE__{} = b, path_prefix, weight_offset) do
     Enum.reduce(Map.keys(a.settings) ++ Map.keys(b.settings), a,
       fn(setting, acc) ->
-        put_in(acc, [Access.key(:settings), setting], Noizu.UserSettings.Setting.append(a.settings[setting], b.settings[setting], path_prefix, weight_offset))
+        put_in(acc, [Access.key(:settings), setting], Noizu.V3.UserSettings.Setting.append(a.settings[setting], b.settings[setting], path_prefix, weight_offset))
       end)
   end
 
@@ -33,7 +33,7 @@ defmodule Noizu.UserSettings.Settings do
   def merge(%__MODULE__{} = a, %__MODULE__{} = b) do
     Enum.reduce(Map.keys(a.settings) ++ Map.keys(b.settings), a,
       fn(setting, acc) ->
-        put_in(acc, [Access.key(:settings), setting], Noizu.UserSettings.Setting.merge(a.settings[setting], b.settings[setting]))
+        put_in(acc, [Access.key(:settings), setting], Noizu.V3.UserSettings.Setting.merge(a.settings[setting], b.settings[setting]))
       end)
   end
 
@@ -44,7 +44,7 @@ defmodule Noizu.UserSettings.Settings do
     Insert new value for a setting at top level/global default.
   """
   def insert(%__MODULE__{} = this, setting, value, weight) do
-    update_in(this, [Access.key(:settings), setting], &(Noizu.UserSettings.Setting.insert(&1, setting, value, [], weight)))
+    update_in(this, [Access.key(:settings), setting], &(Noizu.V3.UserSettings.Setting.insert(&1, setting, value, [], weight)))
   end
 
   #--------------------------------------------
@@ -54,7 +54,7 @@ defmodule Noizu.UserSettings.Settings do
     Insert new value for a setting at a given path and weight.
   """
   def insert(%__MODULE__{} = this, setting, value, path, weight) do
-    update_in(this, [Access.key(:settings), setting], &(Noizu.UserSettings.Setting.insert(&1, setting, value, path, weight)))
+    update_in(this, [Access.key(:settings), setting], &(Noizu.V3.UserSettings.Setting.insert(&1, setting, value, path, weight)))
   end
 
   #--------------------------------------------
@@ -64,7 +64,7 @@ defmodule Noizu.UserSettings.Settings do
     Determine the effective global setting
   """
   def effective(%__MODULE__{} = this, setting) do
-    Noizu.UserSettings.Setting.effective(this.settings[setting], [])
+    Noizu.V3.UserSettings.Setting.effective(this.settings[setting], [])
   end
 
   #--------------------------------------------
@@ -76,7 +76,7 @@ defmodule Noizu.UserSettings.Settings do
     the highest weight.
   """
   def effective(%__MODULE__{} = this, setting, path) do
-    Noizu.UserSettings.Setting.effective(this.settings[setting], path)
+    Noizu.V3.UserSettings.Setting.effective(this.settings[setting], path)
   end
 
   #--------------------------------------------
@@ -86,7 +86,7 @@ defmodule Noizu.UserSettings.Settings do
     Determine the effective global setting
   """
   def effective_for(%__MODULE__{} = this, setting, paths) do
-    Noizu.UserSettings.Setting.effective_for(this.settings[setting], paths)
+    Noizu.V3.UserSettings.Setting.effective_for(this.settings[setting], paths)
   end
 
 end
@@ -94,7 +94,7 @@ end
 #-----------------------------------------------------------------------------
 # Inspect Protocol
 #-----------------------------------------------------------------------------
-defimpl Inspect, for: Noizu.UserSettings.Settings do
+defimpl Inspect, for: Noizu.V3.UserSettings.Settings do
   import Inspect.Algebra
 
   def inspect(entity, opts) do

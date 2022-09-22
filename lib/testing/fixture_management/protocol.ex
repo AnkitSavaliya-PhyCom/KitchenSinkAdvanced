@@ -1,4 +1,4 @@
-defprotocol Noizu.Testing.FixtureManagement.Protocol do
+defprotocol Noizu.V3.Testing.FixtureManagement.Protocol do
   def release(fixture, options)
   def reserve(fixture, until, options)
   def tag(fixture, tag, value, options)
@@ -6,7 +6,7 @@ defprotocol Noizu.Testing.FixtureManagement.Protocol do
   def history(fixture, options)
 end
 
-defimpl Noizu.Testing.FixtureManagement.Protocol, for: Any do
+defimpl Noizu.V3.Testing.FixtureManagement.Protocol, for: Any do
   def release(_fixture, _options), do: :pending
   def reserve(_fixture, _until, _options), do: :pending
   def tag(_fixture, _tag, _value, _options), do: :pending
@@ -17,7 +17,7 @@ defimpl Noizu.Testing.FixtureManagement.Protocol, for: Any do
     module = Macro.expand(module, __ENV__)
     # options = Macro.expand(options, __ENV__)
     quote do
-      defimpl Noizu.Testing.FixtureManagement.Protocol, for: unquote(module) do
+      defimpl Noizu.V3.Testing.FixtureManagement.Protocol, for: unquote(module) do
         def release(_fixture, _options), do: :pending
         def reserve(_fixture, _until, _options), do: :pending
         def tag(_fixture, _tag, _value, _options), do: :pending
@@ -30,39 +30,39 @@ end
 
 
 
-defimpl Noizu.Testing.FixtureManagement.Protocol, for: Tuple do
+defimpl Noizu.V3.Testing.FixtureManagement.Protocol, for: Tuple do
 
   def release(fixture, options) do
     cond do
-      fixture = Noizu.ERP.entity!(fixture) -> Noizu.Testing.FixtureManagement.Protocol.release(fixture, options)
+      fixture = Noizu.ERP.entity!(fixture) -> Noizu.V3.Testing.FixtureManagement.Protocol.release(fixture, options)
       :else -> raise "Fixture Resolution Failed"
     end
   end
 
   def reserve(fixture, until, options) do
     cond do
-      fixture = Noizu.ERP.entity!(fixture) -> Noizu.Testing.FixtureManagement.Protocol.reserve(fixture, until, options)
+      fixture = Noizu.ERP.entity!(fixture) -> Noizu.V3.Testing.FixtureManagement.Protocol.reserve(fixture, until, options)
       :else -> raise "Fixture Resolution Failed"
     end
   end
 
   def tag(fixture, attribute, value, options) do
     cond do
-      fixture = Noizu.ERP.entity!(fixture) -> Noizu.Testing.FixtureManagement.Protocol.tag(fixture, attribute, value, options)
+      fixture = Noizu.ERP.entity!(fixture) -> Noizu.V3.Testing.FixtureManagement.Protocol.tag(fixture, attribute, value, options)
       :else -> raise "Fixture Resolution Failed"
     end
   end
 
   def flag(fixture, message, options)do
     cond do
-      fixture = Noizu.ERP.entity!(fixture) -> Noizu.Testing.FixtureManagement.Protocol.flag(fixture, message, options)
+      fixture = Noizu.ERP.entity!(fixture) -> Noizu.V3.Testing.FixtureManagement.Protocol.flag(fixture, message, options)
       :else -> raise "Fixture Resolution Failed"
     end
   end
 
   def history(fixture, options)do
     cond do
-      fixture = Noizu.ERP.entity!(fixture) -> Noizu.Testing.FixtureManagement.Protocol.history(fixture, options)
+      fixture = Noizu.ERP.entity!(fixture) -> Noizu.V3.Testing.FixtureManagement.Protocol.history(fixture, options)
       :else -> raise "Fixture Resolution Failed"
     end
   end

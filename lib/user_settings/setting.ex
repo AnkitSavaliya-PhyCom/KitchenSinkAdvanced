@@ -3,7 +3,7 @@
 # Copyright (C) 2018 Noizu Labs, Inc. All rights reserved.
 #-------------------------------------------------------------------------------
 
-defmodule Noizu.UserSettings.Setting do
+defmodule Noizu.V3.UserSettings.Setting do
   @type t :: %__MODULE__{
                setting: atom,
                stack: Map.t,
@@ -116,7 +116,7 @@ end
 #-----------------------------------------------------------------------------
 # Inspect Protocol
 #-----------------------------------------------------------------------------
-defimpl Inspect, for: Noizu.UserSettings.Setting do
+defimpl Inspect, for: Noizu.V3.UserSettings.Setting do
   import Inspect.Algebra
 
   def inspect(entity, opts) do
@@ -126,7 +126,7 @@ defimpl Inspect, for: Noizu.UserSettings.Setting do
 
       opts.limit >= 499 ->
         stack = Enum.reduce(entity.stack, %{}, fn({k, v}, acc) ->
-          put_in(acc, [k], %{effective: Noizu.UserSettings.Setting.effective(entity, k), entries: length(v)})
+          put_in(acc, [k], %{effective: Noizu.V3.UserSettings.Setting.effective(entity, k), entries: length(v)})
         end)
         concat ["#Setting(", to_doc(entity.setting, opts), ")<", to_doc(stack, opts), ">"]
 

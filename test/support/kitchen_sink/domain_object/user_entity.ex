@@ -31,7 +31,7 @@ defmodule Noizu.KitchenSink.V3.Support.User do
 
 end # end defmodule
 
-defimpl Noizu.Proto.EmailAddress, for: Noizu.KitchenSink.V3.Support.User.Entity do
+defimpl Noizu.V3.Proto.EmailAddress, for: Noizu.KitchenSink.V3.Support.User.Entity do
   def email_details(reference) do
     %{ref: Noizu.KitchenSink.V3.Support.User.Entity.ref(reference), name: reference.name, email: reference.email}
   end

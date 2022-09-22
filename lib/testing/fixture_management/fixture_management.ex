@@ -1,4 +1,4 @@
-defmodule Noizu.Testing.FixtureManagement do
+defmodule Noizu.V3.Testing.FixtureManagement do
 
 
 

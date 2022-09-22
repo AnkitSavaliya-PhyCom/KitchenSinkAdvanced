@@ -56,7 +56,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -183,7 +183,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Version.Revision.Table, [:passthrough], MockDB.Article.Version.Revision.MockTable.config()},
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -232,7 +232,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -317,7 +317,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -355,7 +355,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -387,7 +387,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -418,7 +418,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -471,7 +471,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -523,7 +523,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -588,7 +588,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -636,7 +636,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -680,7 +680,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -726,7 +726,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -774,7 +774,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -799,7 +799,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -825,7 +825,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
@@ -850,7 +850,7 @@ defmodule Noizu.V3.CMS.AcceptanceTest do
       {Article.Active.Version.Table, [:passthrough], MockDB.Article.Active.Version.MockTable.config()},
       {Article.Active.Version.Revision.Table, [:passthrough], MockDB.Article.Active.Version.Revision.MockTable.config()},
     ]) do
-      Noizu.Testing.Mnesia.Emulator.reset()
+      Noizu.V3.Testing.Mnesia.Emulator.reset()
       
       # Setup Article
       post = @cms_post
