@@ -162,7 +162,7 @@ defmodule Noizu.EmailService.V3.Email.Binding do
     reply_to = is_map(reply_to) && reply_to || nil
 
     # prepare response
-    %__MODULE__{
+    binding = %__MODULE__{
       recipient: recipient[:ref],
       recipient_name: binding_input[:recipient_name] || recipient[:name],
       recipient_email: (txn_email.recipient_email != :default && txn_email.recipient_email) || binding_input[:recipient_email] || recipient[:email],
@@ -192,6 +192,7 @@ defmodule Noizu.EmailService.V3.Email.Binding do
 
       attachments: txn_email.attachments,
     }
+    {outcome, binding}
   end # end bind/2
 
   #----------------------------

@@ -6,7 +6,7 @@
 defmodule Noizu.KitchenSink.V3.Support.User do
   use Noizu.DomainObject
   @vsn 1.0
-  @sref "test-user"
+  @sref "test-user-v3"
   @persistence_layer {Noizu.KitchenSink.V3.Database, cascade_block?: true, table: Noizu.KitchenSink.V3.Database.Support.User.Table}
   defmodule Entity do
     @universal_identifier false

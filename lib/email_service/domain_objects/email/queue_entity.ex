@@ -59,9 +59,7 @@ defmodule Noizu.EmailService.V3.Email.Queue do
         event_time: queue_entry.created_on,
         details: {:error, details || :unknown},
       } |> Noizu.EmailService.V3.Email.Queue.Event.Repo.create!(Noizu.ElixirCore.CallingContext.system(context))
-
-      queue_entry
-
+      {:ok, queue_entry}
     end # end queue_failed/3
 
     #--------------------------
@@ -69,7 +67,7 @@ defmodule Noizu.EmailService.V3.Email.Queue do
     #--------------------------
     def queue!(%Binding{} = binding, context) do
       time = DateTime.utc_now()
-      %Queue.Entity{
+      queue = %Queue.Entity{
         recipient: binding.recipient,
         sender: binding.sender,
         state: :queued,
@@ -80,6 +78,7 @@ defmodule Noizu.EmailService.V3.Email.Queue do
         binding: binding,
         email: nil,
       } |> create!(CallingContext.system(context))
+      queue && {:ok, queue} || {:error, :queue_update}
     end # end queue/2
 
     #--------------------------
@@ -121,4 +120,60 @@ defmodule Noizu.EmailService.V3.Email.Queue do
 
 
 
+end
+
+
+defimpl Noizu.V3.Proto.EmailServiceQueue, for: [Noizu.EmailService.V3.Email.Queue.Entity] do
+  def template(queue, _context, _options) do
+    queue.binding.template_version.template
+  end
+  
+  def binding(queue, _context, _options) do
+    queue.binding
+  end
+  
+  def set_email(queue, email, _context, _options) do
+    put_in(queue, [Access.key(:email)], email)
+  end
+  
+  def recipient_email(queue, _context, _options) do
+    queue.binding.recipient_email
+  end
+  
+  def attempt_send(queued_email, context, options) do
+    case Noizu.EmailService.V3.SendGrid.TransactionalEmail.send_email!(queued_email, context, options) do
+      {:delivered, email} ->
+        queued_email = cond do
+                         options[:persist_email] -> put_in(queued_email, [Access.key(:email)], email)
+                         :else -> queued_email
+                       end
+        details = case queued_email.state do
+                    :queued -> :first_attempt
+                    :retrying -> :retry_attempt
+                    v -> v
+                  end
+        Noizu.EmailService.V3.Email.Queue.Repo.update_state_and_history!(queued_email, :delivered, {:delivered, details}, context)
+      {:error, {:delivery, error, email}} ->
+        queued_email = cond do
+                         options[:persist_email] -> put_in(queued_email, [Access.key(:email)], email)
+                         :else -> queued_email
+                       end
+        Noizu.EmailService.V3.Email.Queue.Repo.update_state_and_history!(queued_email, :retrying, {:error, {:error, error}}, context)
+      {:error, {:unsupported_template, unsupported_template}} ->
+        Noizu.EmailService.V3.Email.Queue.Repo.update_state_and_history!(queued_email, :error, {:error, {:unsupported_template, unsupported_template}}, context)
+      {:restricted, {:recipient, recipient}} ->
+        Noizu.EmailService.V3.Email.Queue.Repo.update_state_and_history!(queued_email, :restricted, {:restricted, recipient}, context)
+      {:simulated, {:email, email}} ->
+        queued_email = cond do
+                         options[:persist_email] -> put_in(queued_email, [Access.key(:email)], email)
+                         :else -> queued_email
+                       end
+        Noizu.EmailService.V3.Email.Queue.Repo.update_state_and_history!(queued_email, :delivered, {:delivered, :simulated}, context)
+      {:simulated, {:error, {:unsupported_template, _}}} ->
+        Noizu.EmailService.V3.Email.Queue.Repo.update_state_and_history!(queued_email, :delivered, {:delivered, :simulated}, context)
+      error ->
+        Noizu.EmailService.V3.Email.Queue.Repo.update_state_and_history!(queued_email, :retrying, {:error, {:error, error}}, context)
+    end
+  end
+  
 end

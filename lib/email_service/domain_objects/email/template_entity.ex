@@ -23,20 +23,21 @@ defmodule Noizu.EmailService.V3.Email.Template do
       public_field :status, :active
       public_field :kind, __MODULE__
     end
-
-
+    
     #--------------------------
     # refresh!
     #--------------------------
     def refresh!(%__MODULE__{} = this, context) do
       cond do
         simulate?() ->
-          this
+          {:ok, this}
         (this.synched_on == nil || DateTime.compare(DateTime.utc_now, Timex.shift(this.synched_on, minutes: 30)) == :gt ) ->
-          this.external_template_identifier
-          |> internal_refresh!(this)
-          |> Noizu.EmailService.V3.Email.Template.Repo.update!(context)
-        true -> this
+          this = this.external_template_identifier
+                 |> internal_refresh!(this)
+                 |> Noizu.EmailService.V3.Email.Template.Repo.update!(context)
+          {:ok, this}
+        :else ->
+          {:ok, this}
       end
     end # end refresh/1
 
@@ -100,4 +101,7 @@ end
 
 defimpl Noizu.V3.Proto.EmailServiceTemplate, for: Noizu.EmailService.V3.Email.Template.Entity do
   defdelegate refresh!(template, context), to: Noizu.EmailService.V3.Email.Template.Entity
+  def bind_template(template, txn_email, context, options \\ nil) do
+    Noizu.EmailService.V3.Email.Binding.bind_from_template(txn_email, template, context, options)
+  end
 end

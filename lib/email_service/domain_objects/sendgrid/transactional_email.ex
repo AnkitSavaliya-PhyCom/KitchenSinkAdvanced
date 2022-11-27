@@ -6,8 +6,8 @@
 defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
   alias Noizu.KitchenSink.V3.Types, as: T
   alias Noizu.EmailService.V3.Email.Binding
-  alias Noizu.EmailService.V3.Email.Template
-  alias Noizu.EmailService.V3.Email.Queue
+  
+  
   require Logger
 
   @vsn 1.0
@@ -43,6 +43,10 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
     vsn: @vsn
   ]
 
+  def email_queue_provider() do
+    Application.get_env(:noizu_email_service, :queue_provider, Noizu.EmailService.V3.EmailQueue.Behaviour.DefaultProvider)
+  end
+  
   #--------------------------
   # send!/1
   #--------------------------
@@ -50,63 +54,55 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
   @TODO cleanup implementation get rid of nested case statements.
   """
   def send!(%__MODULE__{} = this, context, options \\ %{}) do
-    template = Noizu.ERP.entity!(this.template) |> Template.Entity.refresh!(context)
-    case template do
-      {:error, details} ->
-        #Queue.Repo.audit!(this, {:fetch, {:error, details}})
-        Logger.error("extract template error: #{inspect details}")
-        {:error, details}
-      %{__struct__: Template.Entity} ->
-        case Binding.bind_from_template(this, template, context, options) do
-          binding = %Binding{state: :ok} ->
-            queued_email = Queue.Repo.queue!(binding, context)
-            spawn(fn -> send_email!(queued_email, context, options) end)
-            queued_email
-          binding = %Binding{state: {:error, details}} ->
-            Queue.Repo.queue_failed!(binding, details, context) #Todo save more information on bind failure.
-        end # end case
-    end # end case
+    with {:ok, template} <- Noizu.ERP.entity_ok!(this.template),
+         {:ok, template} <- Noizu.V3.Proto.EmailServiceTemplate.refresh!(template, context),
+         {:ok, binding} <- Noizu.V3.Proto.EmailServiceTemplate.bind_template(template, this, context, options),
+         {:ok, response} <- email_queue_provider().queue!(binding, context, options) do
+      {:ok, response}
+    else
+      {_, binding = %Binding{state: {:error, details}}} ->
+        #Todo prepare more information concerning bind failure.
+        with {:ok, failure} <- email_queue_provider().queue_failure!(binding, details, context) do
+          {:error, {:binding, details, failure}}
+        end
+      {:error, details} -> {:error, details}
+    end
   end # end send!/1
+
 
   #--------------------------
   # send_email!/2
   #--------------------------
   def send_email!(queued_email, context, options \\ %{}) do
-    cond do
-      simulate?() || options[:simulate_email] == true ->
-        case queued_email.binding.template_version.template do
-          {:sendgrid, sendgrid_template_id} ->
-            email = build_email(sendgrid_template_id, queued_email.binding)
-            queued_email = options[:persist_email] && put_in(queued_email, [Access.key(:email)], email) || queued_email
-            Queue.Repo.update_state_and_history!(queued_email, :delivered, {:delivered, :simulated}, context)
-          _else ->
-            Queue.Repo.update_state_and_history!(queued_email, :delivered, {:delivered, :simulated}, context)
+    with :attempt_delivery <- (simulate?() || options[:simulate_email] == true) && :simulate || :attempt_delivery,
+         recipient <- Noizu.V3.Proto.EmailServiceQueue.recipient_email(queued_email, context, options),
+         :unrestricted <- restricted?(recipient) && {:restricted, recipient} || :unrestricted do
+      with {:sendgrid, sendgrid_template_id} <- Noizu.V3.Proto.EmailServiceQueue.template(queued_email, context, options) do
+        binding = Noizu.V3.Proto.EmailServiceQueue.binding(queued_email, context, options)
+        email = build_email(sendgrid_template_id, binding)
+        with :ok <- SendGrid.Mail.send(email) do
+          {:delivered, email}
+        else
+          {:error, error} ->
+            {:error, {:delivery, error, email}}
+          error ->
+            {:error, {:delivery, error, email}}
         end
-      restricted?(queued_email.binding.recipient_email) ->
-        Queue.Repo.update_state_and_history!(queued_email, :restricted, {:restricted, :restricted}, context)
-      true ->
-        case queued_email.binding.template_version.template do
+      else
+        unsupported_template -> {:error, {:unsupported_template, unsupported_template}}
+      end
+    else
+    {:restricted, recipient} ->
+      {:restricted, {:recipient, recipient}}
+    :simulate ->
+        case Noizu.V3.Proto.EmailServiceQueue.template(queued_email, context, options) do
           {:sendgrid, sendgrid_template_id} ->
-            email = build_email(sendgrid_template_id, queued_email.binding)
-            queued_email = options[:persist_email] && put_in(queued_email, [Access.key(:email)], email) || queued_email
-            v = SendGrid.Mail.send(email)
-            case v do
-              :ok ->
-                details = case queued_email.state do
-                  :queued -> :first_attempt
-                  :retrying -> :retry_attempt
-                  v -> v
-                end
-                Queue.Repo.update_state_and_history!(queued_email, :delivered, {:delivered, details}, context)
-                :ok
-              {:error, error} ->
-                Queue.Repo.update_state_and_history!(queued_email, :retrying, {:error, {:error, error}}, context)
-                {:error, error}
-              error ->
-                Queue.Repo.update_state_and_history!(queued_email, :retrying, {:error, {:error, error}}, context)
-                error
-            end # end case Mailer.send
-        end # end case template_record.template.external_template_identifier do
+            binding = Noizu.V3.Proto.EmailServiceQueue.binding(queued_email, context, options)
+            email = build_email(sendgrid_template_id, binding)
+            {:simulated, {:email, email}}
+          unsupported_template ->
+            {:simulated, {:error, {:unsupported_template, unsupported_template}}}
+        end
     end
   end # end send_email/3
 
@@ -218,7 +214,7 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
   #--------------------------
   # put_substitutions/2
   #--------------------------
-  defp put_substitutions({substitution_key, substitution_value}, email) do
+  def put_substitutions({substitution_key, substitution_value}, email) do
     if is_map(substitution_value) do
       Enum.reduce(substitution_value, email, fn({k,v}, acc) -> put_substitutions({"#{substitution_key}.#{k}", v}, acc) end)
     else
@@ -226,13 +222,8 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
     end
   end
 
-  defp put_substitutions(email, binding) do
-    case binding.effective_binding do
-      %Noizu.EmailService.V3.Email.Binding.Substitution.Legacy.Effective{bound: substitutions} ->
-        Enum.reduce(substitutions || %{}, email, fn({substitution_key, substitution_value}, acc) -> put_substitutions({substitution_key, substitution_value}, acc) end)
-      %Noizu.EmailService.V3.Email.Binding.Substitution.Dynamic.Effective{bound: dynamic} ->
-        Enum.reduce(dynamic || %{}, email, fn({dynamic_key, dynamic_value}, acc) -> SendGrid.Email.add_dynamic_template_data(acc, dynamic_key, dynamic_value) end)
-    end
+  def put_substitutions(email, binding) do
+    Noizu.V3.Proto.EmailServiceBinder.apply!(binding.effective_binding, email, Noizu.ElixirCore.CallingContext.system(), [])
   end # end put_substitutions/2
 
   #--------------------------
