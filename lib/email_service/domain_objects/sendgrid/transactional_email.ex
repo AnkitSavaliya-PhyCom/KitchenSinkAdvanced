@@ -44,7 +44,7 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
   ]
 
   def email_queue_provider() do
-    Application.get_env(:noizu_email_service, :queue_provider, Noizu.EmailService.V3.EmailQueue.Behaviour.DefaultProvider)
+    Application.get_env(:noizu_advanced_scaffolding, :email_queue_provider, Noizu.EmailService.V3.EmailQueue.Behaviour.DefaultProvider)
   end
   
   #--------------------------
