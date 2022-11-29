@@ -12,7 +12,7 @@ defmodule Noizu.EmailService.V3.Email.Template do
     @universal_identifier false
     @auto_generate false
     Noizu.DomainObject.noizu_entity() do
-      identifier :compound, template: {:atom, :atom}
+      identifier :compound, template: {{:atom, [constraint: :any]}, {:atom, [constraint: :any]}}
       public_field :synched_on
       public_field :cached
 
