@@ -77,9 +77,10 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
     with :attempt_delivery <- (simulate?() || options[:simulate_email] == true) && :simulate || :attempt_delivery,
          recipient <- Noizu.V3.Proto.EmailServiceQueue.recipient_email(queued_email, context, options),
          :unrestricted <- restricted?(recipient) && {:restricted, recipient} || :unrestricted do
-      with {:sendgrid, sendgrid_template_id} <- Noizu.V3.Proto.EmailServiceQueue.template(queued_email, context, options) do
+      with {:sendgrid, sendgrid_template_id} <- Noizu.V3.Proto.EmailServiceQueue.template(queued_email, context, options),
+           sendgrid_version_id <- Noizu.V3.Proto.EmailServiceQueue.version(queued_email, context, options) do
         binding = Noizu.V3.Proto.EmailServiceQueue.binding(queued_email, context, options)
-        email = build_email(sendgrid_template_id, binding)
+        email = build_email(sendgrid_template_id, sendgrid_version_id, binding)
         with :ok <- SendGrid.Mail.send(email) do
           {:delivered, email}
         else
@@ -98,7 +99,8 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
         case Noizu.V3.Proto.EmailServiceQueue.template(queued_email, context, options) do
           {:sendgrid, sendgrid_template_id} ->
             binding = Noizu.V3.Proto.EmailServiceQueue.binding(queued_email, context, options)
-            email = build_email(sendgrid_template_id, binding)
+            sendgrid_version_id = Noizu.V3.Proto.EmailServiceQueue.version(queued_email, context, options)
+            email = build_email(sendgrid_template_id, sendgrid_version_id, binding)
             {:simulated, {:email, email}}
           unsupported_template ->
             {:simulated, {:error, {:unsupported_template, unsupported_template}}}
@@ -113,6 +115,22 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
     # Setup email
     SendGrid.Email.build()
     |> SendGrid.Email.put_template(sendgrid_template_id)
+    |> put_sender(binding)
+    |> put_recipient(binding)
+    |> put_reply_to(binding)
+    |> put_bcc(binding)
+    |> put_text(binding)
+    |> put_html(binding)
+    |> put_subject(binding)
+    |> put_substitutions(binding)
+    |> put_attachments(binding)
+  end # end build_email/2
+
+  defp build_email(sendgrid_template_id, sendgrid_version_id, binding) do
+    # Setup email
+    SendGrid.Email.build()
+    |> SendGrid.Email.put_template(sendgrid_template_id)
+    |> SendGrid.Email.put_template_version(sendgrid_version_id)
     |> put_sender(binding)
     |> put_recipient(binding)
     |> put_reply_to(binding)

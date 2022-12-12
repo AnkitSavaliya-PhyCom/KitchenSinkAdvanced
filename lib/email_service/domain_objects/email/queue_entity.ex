@@ -127,6 +127,9 @@ defimpl Noizu.V3.Proto.EmailServiceQueue, for: [Noizu.EmailService.V3.Email.Queu
   def template(queue, _context, _options) do
     queue.binding.template_version.template
   end
+  def version(queue, _context, _options) do
+    queue.binding.template_version.version
+  end
   
   def binding(queue, _context, _options) do
     queue.binding

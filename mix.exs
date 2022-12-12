@@ -3,7 +3,7 @@ defmodule Noizu.KitchenSink.V3.Mixfile do
 
   def project do
     [app: :noizu_kitchen_sink_advanced,
-     version: "0.3.11",
+     version: "0.3.12",
      elixir: "~> 1.4",
      package: package(),
      deps: deps(),
@@ -50,7 +50,7 @@ defmodule Noizu.KitchenSink.V3.Mixfile do
       {:semaphore, "~> 1.0"}, # https://github.com/discordapp/semaphore
       {:tzdata, github: "noizu/tzdata", tag: "opt_exp", override: true},
       {:timex, github: "noizu/timex", ref: "7e3c887", override: true},
-      {:sendgrid, github: "Noizu/sendgrid_elixir", branch: "master"},
+      {:sendgrid, github: "Noizu/sendgrid_elixir", tag: "2.0.1"},
       {:mock, "~> 0.3.1", optional: true},
     ]
   end # end deps

@@ -5,6 +5,7 @@
 
 defprotocol Noizu.V3.Proto.EmailServiceQueue do
   def template(queue, context, options)
+  def version(queue, context, options)
   def binding(queue, context, options)
   def set_email(queue, email, context, options)
   def attempt_send(queue, context, options)
