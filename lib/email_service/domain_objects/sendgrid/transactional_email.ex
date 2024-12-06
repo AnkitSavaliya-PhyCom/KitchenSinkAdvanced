@@ -6,8 +6,8 @@
 defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
   alias Noizu.KitchenSink.V3.Types, as: T
   alias Noizu.EmailService.V3.Email.Binding
-  
-  
+
+
   require Logger
 
   @vsn 1.0
@@ -46,7 +46,7 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
   def email_queue_provider() do
     Application.get_env(:noizu_kitchen_sink_advanced, :email_queue_provider, Noizu.EmailService.V3.EmailQueue.Behaviour.DefaultProvider)
   end
-  
+
   #--------------------------
   # send!/1
   #--------------------------
@@ -118,6 +118,7 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
     |> put_sender(binding)
     |> put_recipient(binding)
     |> put_reply_to(binding)
+    |> put_header(binding)
     |> put_bcc(binding)
     |> put_text(binding)
     |> put_html(binding)
@@ -134,6 +135,7 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
     |> put_sender(binding)
     |> put_recipient(binding)
     |> put_reply_to(binding)
+    |> put_header(binding)
     |> put_bcc(binding)
     |> put_text(binding)
     |> put_html(binding)
@@ -179,8 +181,15 @@ defmodule Noizu.EmailService.V3.SendGrid.TransactionalEmail do
     end
   end
 
-
-
+  #--------------------------
+  # put_header
+  #--------------------------
+  defp put_header(email, binding) do
+    cond do
+      binding.effective_binding.bound["critical"]["alert"] == true -> SendGrid.Email.add_header(email, "Priority", "High")
+      :else -> email
+    end
+  end
 
   #--------------------------
   # put_attachments
